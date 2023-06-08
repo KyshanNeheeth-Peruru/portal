@@ -1,0 +1,66 @@
+<!-- templates/home.html-->
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% load crispy_forms_filters %}
+
+{% block content %}
+       <div class="table-responsive-sm" >
+            <form action="/courses/" class="w-100" method="POST" class="form-group">
+            <h2>Please select your courses for {{ current_semester }}</h2>
+            {% csrf_token %}
+            <table class="table d-none d-sm-table">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Course Number</th>
+                        <th scope="col">Course Section</th>
+                        <th scope="col">Course Name</th>
+                        <th scope="col">Course Instructor</th>
+                        <th scope="col">Course Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                        <tr class="border-bottom">
+                            <td><input type="checkbox" name="id" class="selected_courses"  value="{{ course.id }}"></td>
+                            <td>{{course.course_number}}</td>
+                            <td>{{course.course_section}}</td>
+                            <td>{{course.course_name}}</td>
+                            <td>{{course.course_instructor}}</td>
+                            <td>{{course.course_notes}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <table class="table d-sm-none ">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Course Number</th>
+                        <th scope="col">Course Section</th>
+                        <th scope="col">Course Name</th>
+                        <th scope="col">Course Instructor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                        <tr class="border-bottom">
+                            <td><input type="checkbox" name="id" class="selected_courses" value="{{ course.id }}"></td>
+                            <td>{{course.course_number}}</td>
+                            <td>{{course.course_section}}</td>
+                            <td>{{course.course_name}}</td>
+                            <td>{{course.course_instructor}}</td>
+                    {% endfor %}
+                </tbody>
+            </table>
+                {% ifequal courses|length 0 %}
+                    <button type="submit" hidden="hidden" class="btn btn-primary w-100"> Submit</button>
+                {% else %}
+                    <button type="submit" class="btn btn-primary w-100"> Submit</button>
+                {% endifequal %}
+            </form>
+        </div>
+{% endblock %}

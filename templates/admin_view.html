@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin View{% endblock %}
+
+{% load crispy_forms_filters %}
+
+{% block content %}
+<h2>Lock or Unlock Account</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form | crispy }}
+    <input type="submit" class="btn btn-primary w-100" value="Submit">
+</form>
+{% endblock %}

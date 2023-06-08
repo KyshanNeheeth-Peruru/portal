@@ -1,0 +1,14 @@
+*.log
+*.pot
+*.pyc
+*/*/*/__pycache__/
+*/*/__pycache__/
+/__pycache__/
+Apply/__pycache__/
+CS_Portal/__pycache__/
+.idea/
+static/
+fixtures/
+django-secrets.json
+.env
+debug.log

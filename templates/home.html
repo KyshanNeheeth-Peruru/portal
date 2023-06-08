@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  Hi {{ user.username }}!
+  <p><a href="{% url 'logout' %}">Log Out</a></p>
+{%elif activated is False%}
+  <div class="alert alert-success">
+    <p>Please check your email to activate your account</p>
+  </div>
+{%elif activated is True%}
+  <div class="alert alert-success">
+    <p>Account Activated, please <a href="/accounts/login">Login</a></p>
+  </div>
+{% else %}
+  <p>You are not logged in</p>
+  <a href="{% url 'login' %}">Log In</a>
+{% endif %}
+{% endblock %}
