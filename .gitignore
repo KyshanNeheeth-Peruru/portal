@@ -5,7 +5,7 @@
 */*/__pycache__/
 /__pycache__/
 apply/__pycache__/
-CS_Portal/__pycache__/
+portal/__pycache__/
 .idea/
 fixtures/
 django-secrets.json
