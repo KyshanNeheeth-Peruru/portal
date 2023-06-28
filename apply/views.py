@@ -74,18 +74,27 @@ def send_activation_email(request, user):
 
 def register_view(request):
     if request.method == "POST":
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            # path to view getting the domain we are on relative url to verification encode uid token
-            user = User.objects.get(username=request.POST["username"])
-            deactivate_user(user)
-            create_ldap_user(request)
-            send_activation_email(request, user)
-            return render(request, "../templates/home.html", {"activated": False})
-    else:
-        form = RegistrationForm()
-    return render(request, "../templates/registration/register.html", {"form": form})
+        username= request.POST['username']
+        firstname= request.POST['firstname']
+        lastname= request.POST['lastname']
+        email= request.POST['email']
+        pasw1= request.POST['pasw1']
+        pasw2= request.POST['pasw2']
+        if(pasw1!=pasw2):
+            messages.error(request,"Passwords dont match")
+            return redirect('signup')
+        else:
+            user = User.objects.create_user(username,email,pasw1)
+            user.first_name = firstname
+            user.last_name = lastname
+            user.save()
+            # user = User.objects.get(username=request.POST["username"])
+            #deactivate_user(user)
+            # create_ldap_user(request)
+            #send_activation_email(request, user)
+            # return render(request, "../templates/home.html", {"activated": False})
+            return render(request, "../templates/registration/register.html")
+    return render(request, "../templates/registration/register.html")
 
 
 login_name = ""

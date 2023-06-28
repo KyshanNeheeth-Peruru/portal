@@ -12,10 +12,36 @@
             <h2>Create your UMB CS Portal Account</h2>
             <form  method="POST" class=" from-group nt-weight-bold p-2 border-bottom">
                 {% csrf_token %}
-                {% comment %} {{ form | crispy }} {% endcomment %}
-    {#            <div>#}
-                    <button type="submit" class="btn btn-primary w-100">Join</button>
-    {#            </div>#}
+                <div class="form-group row">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                        <input type="text" class="form-control form-control-user" id="firstname"
+                               name="firstname" placeholder="First Name">
+                    </div>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control form-control-user" id="lastname"
+                               name="lastname" placeholder="Last Name">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="username" class="form-control form-control-user" id="username"
+                           name="username" placeholder="Enter Username">
+                </div>
+                <div class="form-group">
+                    <input type="email" class="form-control form-control-user" id="email"
+                           name="email" placeholder="Email Address">
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                        <input type="password" class="form-control form-control-user"
+                               id="pasw1" name="pasw1" placeholder="Password">
+                    </div>
+                    <div class="col-sm-6">
+                        <input type="password" class="form-control form-control-user"
+                               id="pasw2" name="pasw2" placeholder="Repeat Password">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Join</button>
+
             </form>
             <br>
             <p style="font-size: 14px;">Already have an account? <a href="{% url 'login' %}">Login</a>!</p>
