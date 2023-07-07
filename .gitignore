@@ -8,6 +8,5 @@ apply/__pycache__/
 portal/__pycache__/
 .idea/
 fixtures/
-django-secrets.json
 .env
 debug.log

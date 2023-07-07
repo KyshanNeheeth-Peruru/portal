@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
@@ -8,9 +8,8 @@ from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.contrib import messages
-from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import SetPasswordForm
-
+from django.contrib.auth import login, logout, get_user_model, authenticate, update_session_auth_hash
 from apply.constants import ActionNames
 from apply.forms import RegistrationForm, AdminView
 from apply.helper import insert_courses_into_user_courses, semester_year, change_ldap_password
@@ -106,8 +105,28 @@ def verification_view(request, uidb64, token):
     logger.debug("Verification link has been generated")
     return render(request, "../templates/home.html", {"activated": True})
 
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return render(request, 'registered_courses.html')
 
-@login_required(login_url="/accounts/login/")
+        else:
+            messages.error(request, "Username or password invalid")
+            return redirect('registered_courses')
+
+    return render(request, 'home.html')
+
+def logout_view(request):
+    logout(request)
+    messages.success(request,"Logged out")
+    return redirect('login')
+
+
+# @login_required(login_url="/accounts/login/")
 def selected_courses(request):
     if request.method == "POST":
         userID = request.user.id
@@ -166,7 +185,7 @@ def selected_courses(request):
         )
 
 
-@login_required(login_url="/accounts/login/")
+# @login_required(login_url="/accounts/login/")
 def registered_courses(request):
     current_semester = semester_year()
     courses = UserCourses.objects.filter(semester_year=current_semester, user_id=request.user.id).order_by("course")
@@ -187,7 +206,7 @@ def registered_courses(request):
     )
 
 
-@login_required(login_url="/accounts/login/")
+# @login_required(login_url="/accounts/login/")
 def change_password(request):
     if request.method == 'POST':
         form = SetPasswordForm(request.user, request.POST)

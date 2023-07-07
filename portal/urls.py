@@ -24,11 +24,12 @@ from apply import views as apply_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", TemplateView.as_view(template_name="home.html"), name="home"),
-    path("accounts/", include("django.contrib.auth.urls")),
+    path('', apply_views.login_view, name='login'),
+    path('login/', apply_views.login_view, name='login'),
     path("register/", apply_views.register_view),
+    path('password_reset/', apply_views.change_password, name='forgotpasw'),
+    path('logout/', apply_views.logout_view, name='logout'),
     path("activate/<uidb64>/<token>", apply_views.verification_view, name="activate"),
-    # path("activate/<uidb64>/<token>", VerificationView.as_view(), name="activate"),
     path("courses/", apply_views.selected_courses),
     path("courses/registered/", apply_views.registered_courses, name="registeredCourses"),
     path('password/', apply_views.change_password, name='change_password'),
