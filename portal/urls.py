@@ -34,5 +34,6 @@ urlpatterns = [
     path("courses/registered/", apply_views.registered_courses, name="registeredCourses"),
     path('password/', apply_views.change_password, name='change_password'),
     path("about_us/", apply_views.about_us, name='about_us'),
+    path("faq/", apply_views.faq, name='faq'),
     path("admin_view/", apply_views.admin_view, name='admin_view'),
 ]

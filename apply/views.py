@@ -229,6 +229,9 @@ def change_password(request):
 def about_us(request):
     return render(request, "../templates/about_us.html")
 
+def faq(request):
+    return render(request, "../templates/faq.html")
+
 
 def admin_view(request):
     form = AdminView()

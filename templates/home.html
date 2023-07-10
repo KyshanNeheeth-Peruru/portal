@@ -22,11 +22,7 @@
         <div class="text-center">
           <h1 class="h4 text-gray-900 mb-4">Login</h1>
         </div>
-        <div>
-          {% for msg in messages %}
-          <p id="message" class="error-message">{{ msg }}</p>
-          {% endfor %}
-        </div>
+        
         <form class="user" method="post">
           {% csrf_token %}
           <div class="form-group">
@@ -50,6 +46,11 @@
         <div class="text-center">
           <a>Not a member?</a>
           <a href="#" class="Register-link">Register!</a>
+        </div>
+        <div>
+          {% for msg in messages %}
+          <p id="message" class="error-message">{{ msg }}</p>
+          {% endfor %}
         </div>
       </div>
     </div>

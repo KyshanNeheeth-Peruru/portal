@@ -3,48 +3,45 @@
 
 {% block content %}
     {% if user.is_authenticated %}
-<!--        if user is already logged in and the user tries to access the login page, it will redirect
-               them to the courses page -->
+        <!-- Redirect the user to the courses page if already logged in -->
         <meta http-equiv="Refresh" content="0; url='/' />
-<!--        <h2>You are already logged in, please <a href="/logout"> log out </a></h2>-->
+        <!-- <h2>You are already logged in, please <a href="/logout"> log out </a></h2> -->
     {% else  %}
         <div class="p-1 w-100 h-100">
             <h2>Create your UMB CS Portal Account</h2>
-            <form  method="POST" class=" from-group nt-weight-bold p-2 border-bottom">
+            <form method="POST" class="form-group nt-weight-bold p-2 border-bottom">
                 {% csrf_token %}
-                <div class="form-group row">
-                    <div class="col-sm-6 mb-3 mb-sm-0">
-                        <input type="text" class="form-control form-control-user" id="firstname"
-                               name="firstname" placeholder="First Name">
-                    </div>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control form-control-user" id="lastname"
-                               name="lastname" placeholder="Last Name">
-                    </div>
+                <div class="form-group mb-9">
+                    <label for="username">Username<span class="asteriskField">*</span></label>
+                    <input type="text" class="form-control form-control-user" id="username" name="username">
+                    <small id="hint_id_username" class="form-text text-muted">Username must be lowercase letters (a-z), numbers (0-9), and 3 to 8 characters long</small>
+                </div>
+                <div class="form-group mb-9">
+                    <label for="firstname">First Name<span class="asteriskField">*</span></label>
+                    <input type="text" class="form-control form-control-user" id="firstname" name="firstname">
+                </div>
+                <div class="form-group mb-9">
+                    <label for="lastname">Last Name<span class="asteriskField">*</span></label>
+                    <input type="text" class="form-control form-control-user" id="lastname" name="lastname">
+                </div>
+                <div class="form-group mb-9">
+                    <label for="email">Email Address<span class="asteriskField">*</span></label>
+                    <input type="email" class="form-control form-control-user" id="email" name="email">
+                </div>
+                <div class="form-group mb-9">
+                    <label for="pasw1">Password<span class="asteriskField">*</span></label>
+                    <input type="password" class="form-control form-control-user" id="pasw1" name="pasw1">
+                </div>
+                <div class="form-group mb-9">
+                    <label for="pasw2">Repeat Password<span class="asteriskField">*</span></label>
+                    <input type="password" class="form-control form-control-user" id="pasw2" name="pasw2">
                 </div>
                 <div class="form-group">
-                    <input type="username" class="form-control form-control-user" id="username"
-                           name="username" placeholder="Enter Username">
+                    <button type="submit" class="btn btn-primary w-100">Join</button>
                 </div>
-                <div class="form-group">
-                    <input type="email" class="form-control form-control-user" id="email"
-                           name="email" placeholder="Email Address">
-                </div>
-                <div class="form-group row">
-                    <div class="col-sm-6 mb-3 mb-sm-0">
-                        <input type="password" class="form-control form-control-user"
-                               id="pasw1" name="pasw1" placeholder="Password">
-                    </div>
-                    <div class="col-sm-6">
-                        <input type="password" class="form-control form-control-user"
-                               id="pasw2" name="pasw2" placeholder="Repeat Password">
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Join</button>
-
             </form>
             <br>
-            <p style="font-size: 14px;">Already have an account? <a href="{% url 'login' %}">Login</a>!</p>
+            <p style="font-size: 20px;">Already have an account? <a href="{% url 'login' %}">Login</a>!</p>
         </div>
-    {%endif%}
+    {% endif %}
 {% endblock %}
