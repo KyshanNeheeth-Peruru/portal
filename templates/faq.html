@@ -6,7 +6,7 @@
 
 <h3>Frequently Asked Questions</h3>
 
-<div style="width:100%; float:left;">
+{% comment %} <div style="width:100%; float:left;">
   <p><strong>Question 1:</strong></p>
   <p>Answer 1.</p>
 </div>
@@ -14,7 +14,16 @@
 <div style="width:100%; float:left;">
   <p><strong>Question 2:</strong></p>
   <p>Answer 2.</p>
-</div>
+</div> {% endcomment %}
+
+<ul>
+  {% for faq in faqs %}
+  <li>
+      <h3>{{ faq.question }}</h3>
+      <p>{{ faq.answer }}</p>
+  </li>
+  {% endfor %}
+</ul>
 
 <p>If you have any further queries or are facing issues with class registration, please email us at <a href="mailto:operator@cs.umb.edu">operator@cs.umb.edu</a>.</p>
 

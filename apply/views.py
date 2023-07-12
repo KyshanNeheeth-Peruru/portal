@@ -13,7 +13,7 @@ from django.contrib.auth import login, logout, get_user_model, authenticate, upd
 from apply.constants import ActionNames
 from apply.forms import RegistrationForm, AdminView
 from apply.helper import insert_courses_into_user_courses, semester_year, change_ldap_password
-from apply.models import Courses, UserCourses, Semesters
+from apply.models import Courses, UserCourses, Semesters, Faq
 from apply.utils import token_generator
 from apply.ldap_helper import LDAPHelper
 from apply.remote_connect import RemoteConnect
@@ -230,7 +230,8 @@ def about_us(request):
     return render(request, "../templates/about_us.html")
 
 def faq(request):
-    return render(request, "../templates/faq.html")
+    faqs=Faq.objects.all()
+    return render(request, "../templates/faq.html",{'faqs':faqs})
 
 
 def admin_view(request):
