@@ -10,3 +10,4 @@ portal/__pycache__/
 fixtures/
 .env
 debug.log
+venv
