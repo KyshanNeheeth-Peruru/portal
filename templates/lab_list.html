@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<h3>Lab List :</h3>
+
+  <form action="/lablist/" method="post">
+    {% csrf_token %}
+    <label for="dropdown">Select a Semester :</label>
+    <select name="selected_sem" id="selected_sem" onchange="this.form.submit()">
+        <option value="" disabled selected> </option>
+        {% for sem in sems %}
+            <option value="{{ sem.semester_longname }}">{{ sem.semester_longname }}</option>
+        {% endfor %}
+    </select>
+    <br>
+</form>
+
+{% comment %} {% if selected_sem %}
+  <h4>List for {{selected_sem}} :</h4>
+  <ul>
+    {% for user in list %}
+      <p> \item {{ user.last_name }} {{ user.first_name }} </p>
+    {% endfor %}
+  </ul>
+{% endif %} {% endcomment %}
+
+<button onclick="copyList()">Copy List</button>
+
+{% if selected_sem %}
+  <h4>List for {{ selected_sem }} :</h4>
+  <ul id="list-text">
+    {% for user in list %}
+      <p> \item {{ user.last_name }} {{ user.first_name }} </p>
+    {% endfor %}
+  </ul>
+
+
+  <script>
+    function copyList() {
+      const listText = document.getElementById("list-text").innerText;
+      const tempInput = document.createElement("textarea");
+      tempInput.value = listText;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+      alert("List copied to clipboard!");
+    }
+  </script>
+{% endif %}
+
+{% endblock %}

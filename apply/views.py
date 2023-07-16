@@ -233,6 +233,16 @@ def faq(request):
     faqs=Faq.objects.all()
     return render(request, "../templates/faq.html",{'faqs':faqs})
 
+def lablist(request):
+    sems=Semesters.objects.all()
+    if request.method == 'POST':
+        selected_sem = request.POST["selected_sem"]
+        allusers=(User.objects.filter(usercourses__course__course_semester__semester_longname=selected_sem)
+            .distinct().order_by('last_name')
+        )
+        return render(request, "../templates/lab_list.html",{'sems':sems,'selected_sem':selected_sem, 'list':allusers})
+    return render(request, "../templates/lab_list.html",{'sems':sems})
+
 
 def admin_view(request):
     form = AdminView()
