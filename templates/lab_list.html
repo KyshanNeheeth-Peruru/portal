@@ -27,12 +27,19 @@
   </ul>
 {% endif %} {% endcomment %}
 
-<button onclick="copyList()">Copy List</button>
 
 {% if selected_sem %}
   <h4>List for {{ selected_sem }} :</h4>
+  <h5> Non faculty : <button onclick="copyList()">Copy List</button> </h5>
   <ul id="list-text">
-    {% for user in list %}
+    {% for user in listNonFac %}
+      <p> \item {{ user.last_name }} {{ user.first_name }} </p>
+    {% endfor %}
+  </ul>
+
+  <h5> Faculty : <button onclick="copyFacList()">Copy List</button> </h5>
+  <ul id="list-fac-text">
+    {% for user in listFac %}
       <p> \item {{ user.last_name }} {{ user.first_name }} </p>
     {% endfor %}
   </ul>
@@ -47,7 +54,20 @@
       tempInput.select();
       document.execCommand("copy");
       document.body.removeChild(tempInput);
-      alert("List copied to clipboard!");
+      alert("List of non faculty copied to clipboard!");
+    }
+  </script>
+
+  <script>
+    function copyFacList() {
+      const listText = document.getElementById("list-fac-text").innerText;
+      const tempInput = document.createElement("textarea");
+      tempInput.value = listText;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+      alert("List of faculty copied to clipboard!");
     }
   </script>
 {% endif %}
