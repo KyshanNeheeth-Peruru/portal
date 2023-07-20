@@ -1,9 +1,9 @@
 from django.contrib import admin
-from apply.models import Courses, UserCourses, Semesters, Faq
+from apply.models import Courses, UserCourses, Semesters, Faq, CoursesAdmin
 
 # Register your models here.
 
-admin.site.register(Courses)
+admin.site.register(Courses, CoursesAdmin)
 admin.site.register(UserCourses)
 admin.site.register(Semesters)
 admin.site.register(Faq)

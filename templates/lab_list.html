@@ -32,9 +32,17 @@
   <h4>List for {{ selected_sem }} :</h4>
   <h5> Non faculty : <button onclick="copyList()">Copy List</button> </h5>
   <ul id="list-text">
+\documentclass{article}<br />
+\usepackage[margin=0.5in]{geometry}<br />
+\usepackage{multicol}<br />
+\begin{document} <br/>
+\begin{multicols}{3} <br />
     {% for user in listNonFac %}
-      <p> \item {{ user.last_name }} {{ user.first_name }} </p>
+      \item {{ user.last_name }} {{ user.first_name }} <br />
     {% endfor %}
+\end{multicols}<br />
+\end{usepackage}<br />
+\end{document}<br />
   </ul>
 
   <h5> Faculty : <button onclick="copyFacList()">Copy List</button> </h5>

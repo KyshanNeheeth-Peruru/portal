@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib import admin
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import UnicodeUsernameValidator
@@ -33,7 +34,7 @@ class Courses(models.Model):
     prof_unix_name = models.CharField(max_length=10, blank=False)
 
     def __str__(self):
-        return self.course_number
+        return f"{self.course_number} - {self.course_section} - {self.course_semester} - {self.course_instructor}"
 
     class Meta:
         verbose_name = "Courses"
@@ -44,6 +45,8 @@ class Courses(models.Model):
             self.course_number, self.course_section, self.course_semester
         )
 
+class CoursesAdmin(admin.ModelAdmin):
+    search_fields = ['course_number']
 
 class UserCourses(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
