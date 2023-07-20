@@ -29,15 +29,15 @@
 
 
 {% if selected_sem %}
-  <h4>List for {{ selected_sem }} :</h4>
-  <h5> Non faculty : <button onclick="copyList()">Copy List</button> </h5>
+  <h4>List for {{ selected_sem }} : <button onclick="copyList()">Copy List</button> </h4>
+  {% comment %} <button onclick="copyList()">Copy List</button> {% endcomment %}
   <ul id="list-text">
 \documentclass{article}<br />
 \usepackage[margin=0.5in]{geometry}<br />
 \usepackage{multicol}<br />
 \begin{document} <br/>
 \begin{multicols}{3} <br />
-    {% for user in listNonFac %}
+    {% for user in lab_list %}
       \item {{ user.last_name }} {{ user.first_name }} <br />
     {% endfor %}
 \end{multicols}<br />
@@ -45,12 +45,12 @@
 \end{document}<br />
   </ul>
 
-  <h5> Faculty : <button onclick="copyFacList()">Copy List</button> </h5>
+  {% comment %} <h5> Faculty : <button onclick="copyFacList()">Copy List</button> </h5>
   <ul id="list-fac-text">
     {% for user in listFac %}
       <p> \item {{ user.last_name }} {{ user.first_name }} </p>
     {% endfor %}
-  </ul>
+  </ul> {% endcomment %}
 
 
   <script>
@@ -62,11 +62,10 @@
       tempInput.select();
       document.execCommand("copy");
       document.body.removeChild(tempInput);
-      alert("List of non faculty copied to clipboard!");
     }
   </script>
 
-  <script>
+  {% comment %} <script>
     function copyFacList() {
       const listText = document.getElementById("list-fac-text").innerText;
       const tempInput = document.createElement("textarea");
@@ -77,7 +76,7 @@
       document.body.removeChild(tempInput);
       alert("List of faculty copied to clipboard!");
     }
-  </script>
+  </script> {% endcomment %}
 {% endif %}
 
 {% endblock %}
