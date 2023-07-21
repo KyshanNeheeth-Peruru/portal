@@ -56,11 +56,12 @@
                     {% endfor %}
                 </tbody>
             </table>
-                {% ifequal courses|length 0 %}
-                    <button type="submit" hidden="hidden" class="btn btn-primary w-100"> Submit</button>
-                {% else %}
-                    <button type="submit" class="btn btn-primary w-100"> Submit</button>
-                {% endifequal %}
+            {% if courses|length == 0 %}
+            <button type="submit" hidden="hidden" class="btn btn-primary w-100">Submit</button>
+            {% else %}
+            <button type="submit" class="btn btn-primary w-100">Submit</button>
+            {% endif %}
+        
             </form>
         </div>
 {% endblock %}

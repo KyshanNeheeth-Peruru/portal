@@ -113,25 +113,13 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            # return render(request, 'registered_courses.html')
-        
             current_semester = semester_year()
-            courses = UserCourses.objects.filter(semester_year=current_semester, user_id=request.user.id).order_by("course")
-            courses_list = []
-            for idx in range(len(courses)):
-                temp = {
-                "course_number": courses[idx].course.course_number,
-                "course_section": courses[idx].course.course_section,
-                "course_name": courses[idx].course.course_name,
-                "course_instructor": courses[idx].course.course_instructor,
-                "course_notes": courses[idx].course.course_notes,
-                }
-                courses_list.append(temp)
-            return render(request,"../templates/registered_courses.html",{"current_semester": current_semester, "courses": courses_list},)
+            courses = Courses.objects.filter(course_semester=current_semester)
+            return render(request,"courses.html",{"courses": courses, "current_semester": current_semester})
 
         else:
             messages.error(request, "Username or password invalid")
-            return redirect('registered_courses')
+            return redirect('login')
 
     return render(request, 'home.html')
 
