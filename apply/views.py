@@ -243,7 +243,7 @@ def lablist(request):
     sems=reversed(Semesters.objects.all())
     if request.method == 'POST':
         selected_sem = request.POST["selected_sem"]
-        allusers = User.objects.filter(Q(usercourses__course__course_semester__semester_longname=selected_sem) | Q(is_staff=True)).order_by('last_name')
+        allusers = User.objects.filter(Q(usercourses__course__course_semester__semester_longname=selected_sem) | Q(is_staff=True)).distinct().order_by('last_name')
         # non_faculty = User.objects.filter(usercourses__course__course_semester__semester_longname=selected_sem).exclude(groups__name='Faculty').distinct().order_by('last_name')
         # faculty=(User.objects.filter(usercourses__course__course_semester__semester_longname=selected_sem,groups__name='Faculty').distinct().order_by('last_name'))
         return render(request, "../templates/lab_list.html",{'sems':sems,'selected_sem':selected_sem,'lab_list':allusers})
