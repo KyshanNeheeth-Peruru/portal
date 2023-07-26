@@ -113,16 +113,18 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            current_semester = semester_year()
-            #courses = Courses.objects.filter(course_semester=current_semester)
-            courses = UserCourses.objects.filter(semester_year=current_semester, user_id=request.user).order_by("course")
-            return render(request,"courses.html",{"courses": courses, "current_semester": current_semester})
+            return redirect('courses_list')
 
         else:
             messages.error(request, "Username or password invalid")
             return redirect('login')
 
     return render(request, 'home.html')
+
+def courses_list_view(request):
+    current_semester = semester_year()
+    courses = UserCourses.objects.filter(semester_year=current_semester, user_id=request.user).order_by("course")
+    return render(request,"courses.html",{"courses": courses, "current_semester": current_semester})
 
 def logout_view(request):
     logout(request)
