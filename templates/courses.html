@@ -25,11 +25,11 @@
                     {% for course in courses %}
                         <tr class="border-bottom">
                             <td><input type="checkbox" name="id" class="selected_courses"  value="{{ course.id }}"></td>
-                            <td>{{course.course_number}}</td>
-                            <td>{{course.course_section}}</td>
-                            <td>{{course.course_name}}</td>
-                            <td>{{course.course_instructor}}</td>
-                            <td>{{course.course_notes}}</td>
+                            <td>{{course.course.course_number}}</td>
+                            <td>{{course.course.course_section}}</td>
+                            <td>{{course.course.course_name}}</td>
+                            <td>{{course.course.course_instructor}}</td>
+                            <td>{{course.course.course_notes}}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
