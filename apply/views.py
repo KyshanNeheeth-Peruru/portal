@@ -114,7 +114,8 @@ def login_view(request):
         if user is not None:
             login(request, user)
             current_semester = semester_year()
-            courses = Courses.objects.filter(course_semester=current_semester)
+            #courses = Courses.objects.filter(course_semester=current_semester)
+            courses = UserCourses.objects.filter(semester_year=current_semester, user_id=request.user).order_by("course")
             return render(request,"courses.html",{"courses": courses, "current_semester": current_semester})
 
         else:
