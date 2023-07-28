@@ -2,6 +2,7 @@
 *.pot
 *.pyc
 portal/__pycache__/urls.cpython-311.pyc
+*.pyc
 */*/*/__pycache__/
 */*/__pycache__/
 /__pycache__/
