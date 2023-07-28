@@ -236,6 +236,9 @@ def change_password(request):
 def about_us(request):
     return render(request, "../templates/about_us.html")
 
+def printQuota(request):
+    return render(request, "../templates/printQuota.html")
+
 def faq(request):
     faqs=Faq.objects.all()
     return render(request, "../templates/faq.html",{'faqs':faqs})
