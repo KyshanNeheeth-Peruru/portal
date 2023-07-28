@@ -122,8 +122,9 @@ def login_view(request):
     return render(request, 'home.html')
 
 def courses_list_view(request):
-    current_semester = semester_year()
-    courses = UserCourses.objects.filter(semester_year=current_semester, user_id=request.user).order_by("course")
+    current_semester = Semesters.objects.filter(is_active=True).first()
+    courses = Courses.objects.filter(course_semester=current_semester).order_by("course_number")
+    #courses = Courses.objects.all()
     return render(request,"courses.html",{"courses": courses, "current_semester": current_semester})
 
 def logout_view(request):

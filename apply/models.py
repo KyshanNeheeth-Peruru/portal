@@ -10,6 +10,7 @@ from django.contrib.auth.models import UnicodeUsernameValidator
 class Semesters(models.Model):
     semester_abbrev = models.CharField(max_length=8, primary_key=True)
     semester_longname = models.CharField(max_length=40)
+    is_active = models.BooleanField(default=False)
 
     def __str__(self):
         return self.semester_longname
