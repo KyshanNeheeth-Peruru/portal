@@ -269,11 +269,11 @@ def printQuota(request):
         command = f"sudo /usr/local/bin/edpykota -L {username}"
         output = remote_conn.execute_command(command)
         remote_conn.disconnect()
-        if output is not None:
-            output = output.decode()
-        else:
-            messages.error(request, "No print quota found")
-            return render(request, "../templates/printQuota.html")
+        # if output is not None:
+        #     output = output.decode()
+        # else:
+        #     messages.error(request, "No print quota found")
+        #     return render(request, "../templates/printQuota.html")
         
         return render(request, "../templates/printQuota.html",{output:"output"})
     
