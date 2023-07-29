@@ -4,18 +4,23 @@
 
 {% block content %}
 
-<h3>Print Quota</h3>
+<h3>Print Quota for {{user.username}}</h3>
 
-<button> Click me </button>
+  <div>
+    <form action="/printQuota/" class="w-100" method="POST" class="form-group">
+      {% csrf_token %}
+      <button type="submit">Click Me</button>
+    </form>
+  </div>
 
+  {% if output %}
+    <div>
+      <h4>Print Quota Output:</h4>
+      <pre>{{ output }}</pre>
+    </div>
+  {% endif %}
 
-<style>
-  html {
-    scroll-behavior: smooth;
-  }
-  h3 {
-    scroll-margin-top: 50px;
-  }
-</style>
-
+  {% for msg in messages %}
+    <p id="message" class="error-message">{{ msg }}</p>
+  {% endfor %}
 {% endblock %}

@@ -134,67 +134,79 @@ def logout_view(request):
 
 
 # @login_required(login_url="/accounts/login/")
+# def selected_courses(request):
+#     if request.method == "POST":
+#         userID = request.user.id
+#         selectedID = request.POST.getlist("id")
+#         userName = request.user.username
+#         # obj = LDAPHelper(**{"userName": userName})
+#         # remote_connection = RemoteConnect()
+#         semester = semester_year().lower().split()
+#         if semester[0] == "summer":
+#             semester = semester[0][:3] + semester[1][2:]
+#         else:
+#             semester = semester[0][:1] + semester[1][2:]
+
+#         for courseID in selectedID:
+#             temp = Courses.objects.filter(id=int(courseID))
+#             selectedCourse = temp[0].course_number
+#             selectedCourseSection = temp[0].course_section
+#             selectedCoursesInstructor = temp[0].course_instructor
+#             selectedCoursesSemester = temp[0].course_semester.semester_abbrev
+#             prof_unix_name = temp[0].prof_unix_name
+#             insert_courses_into_user_courses(userID,
+#                                              selectedCourse,
+#                                              selectedCoursesSemester,
+#                                              selectedCourseSection,
+#                                              selectedCoursesInstructor
+#                                              )
+#             ldapCourseSection = f"{selectedCourse}-{selectedCourseSection}"
+#             graderGroup = f"{selectedCourse}-{selectedCourseSection}G"
+#             uid = obj.get_uid_number()
+#             obj.add_user_to_courses(ldapCourseSection)
+#             remote_connection.execute_command(f"sudo python3 /srv/course_directory.py -user {userName} "
+#                                               f"-course {selectedCourse} -sem {semester} "
+#                                               f"-prof {prof_unix_name} -uid {uid} -graderGroup {graderGroup}")
+
+#         return HttpResponseRedirect("registered/")
+#     else:
+#         current_semester = semester_year()
+#         # Get a Queryset of registered Courses
+#         user_registered_courses = UserCourses.objects.filter(semester_year=current_semester,
+#                                                              user_id=request.user.id).order_by("course")
+#         courses = []
+#         try:
+#             # exclude the courses from the display list which the user has already registered
+#             course_semester_id = Semesters.objects.filter(semester_longname=current_semester).values_list("semester_abbrev")[0]
+#             courses = Courses.objects.exclude(
+#                 course_number__in=[c.course for c in user_registered_courses]).filter(
+#                 course_semester_id=course_semester_id).order_by("course_number")
+#         except Exception as ex:
+#             logger.error("Exception: ", ex)
+#         if courses is None or len(courses) == 0:
+#             courses = []
+#         return render(
+#             request,
+#             "../templates/courses.html",
+#             {"courses": courses, "current_semester": current_semester},
+#         )
+
 def selected_courses(request):
+    current_semester = Semesters.objects.filter(is_active=True).first()
     if request.method == "POST":
-        userID = request.user.id
-        selectedID = request.POST.getlist("id")
-        userName = request.user.username
-        obj = LDAPHelper(**{"userName": userName})
-        remote_connection = RemoteConnect()
-        semester = semester_year().lower().split()
-        if semester[0] == "summer":
-            semester = semester[0][:3] + semester[1][2:]
-        else:
-            semester = semester[0][:1] + semester[1][2:]
-
-        for courseID in selectedID:
-            temp = Courses.objects.filter(id=int(courseID))
-            selectedCourse = temp[0].course_number
-            selectedCourseSection = temp[0].course_section
-            selectedCoursesInstructor = temp[0].course_instructor
-            selectedCoursesSemester = temp[0].course_semester.semester_abbrev
-            prof_unix_name = temp[0].prof_unix_name
-            insert_courses_into_user_courses(userID,
-                                             selectedCourse,
-                                             selectedCoursesSemester,
-                                             selectedCourseSection,
-                                             selectedCoursesInstructor
-                                             )
-            ldapCourseSection = f"{selectedCourse}-{selectedCourseSection}"
-            graderGroup = f"{selectedCourse}-{selectedCourseSection}G"
-            uid = obj.get_uid_number()
-            obj.add_user_to_courses(ldapCourseSection)
-            remote_connection.execute_command(f"sudo python3 /srv/course_directory.py -user {userName} "
-                                              f"-course {selectedCourse} -sem {semester} "
-                                              f"-prof {prof_unix_name} -uid {uid} -graderGroup {graderGroup}")
-
-        return HttpResponseRedirect("registered/")
-    else:
-        current_semester = semester_year()
-        # Get a Queryset of registered Courses
-        user_registered_courses = UserCourses.objects.filter(semester_year=current_semester,
-                                                             user_id=request.user.id).order_by("course")
-        courses = []
-        try:
-            # exclude the courses from the display list which the user has already registered
-            course_semester_id = Semesters.objects.filter(semester_longname=current_semester).values_list("semester_abbrev")[0]
-            courses = Courses.objects.exclude(
-                course_number__in=[c.course for c in user_registered_courses]).filter(
-                course_semester_id=course_semester_id).order_by("course_number")
-        except Exception as ex:
-            logger.error("Exception: ", ex)
-        if courses is None or len(courses) == 0:
-            courses = []
-        return render(
-            request,
-            "../templates/courses.html",
-            {"courses": courses, "current_semester": current_semester},
-        )
-
-
-# @login_required(login_url="/accounts/login/")
-def registered_courses(request):
-    current_semester = semester_year()
+        selected_course_ids = request.POST.getlist('id')
+        user = request.user
+        
+        for course_id in selected_course_ids:
+            course = Courses.objects.get(id=course_id)
+            user_course_exists = UserCourses.objects.filter(user=user, course=course, semester_year=current_semester.semester_longname).exists()
+            
+            if not user_course_exists:
+                user_course = UserCourses.objects.create(user=user, course=course, semester_year=current_semester.semester_longname, enrolled=True)
+            else:
+                messages.error(request, f"You already have the course {course.course_number} :  {course.course_name}  for the current semester.")
+        
+        
     courses = UserCourses.objects.filter(semester_year=current_semester, user_id=request.user.id).order_by("course")
     courses_list = []
     for idx in range(len(courses)):
@@ -206,11 +218,25 @@ def registered_courses(request):
             "course_notes": courses[idx].course.course_notes,
         }
         courses_list.append(temp)
-    return render(
-        request,
-        "../templates/registered_courses.html",
-        {"current_semester": current_semester, "courses": courses_list},
-    )
+    return render(request,"../templates/registered_courses.html",{"current_semester": current_semester, "courses": courses_list})
+    
+    
+
+# @login_required(login_url="/accounts/login/")
+def registered_courses(request):
+    current_semester = Semesters.objects.filter(is_active=True).first()
+    courses = UserCourses.objects.filter(semester_year=current_semester, user_id=request.user.id).order_by("course")
+    courses_list = []
+    for idx in range(len(courses)):
+        temp = {
+            "course_number": courses[idx].course.course_number,
+            "course_section": courses[idx].course.course_section,
+            "course_name": courses[idx].course.course_name,
+            "course_instructor": courses[idx].course.course_instructor,
+            "course_notes": courses[idx].course.course_notes,
+        }
+        courses_list.append(temp)
+    return render(request,"../templates/registered_courses.html",{"current_semester": current_semester, "courses": courses_list})
 
 
 # @login_required(login_url="/accounts/login/")
@@ -237,6 +263,20 @@ def about_us(request):
     return render(request, "../templates/about_us.html")
 
 def printQuota(request):
+    username = request.user.username
+    if request.method == 'POST':
+        remote_conn = RemoteConnect()
+        command = f"sudo /usr/local/bin/edpykota -L {username}"
+        output = remote_conn.execute_command(command)
+        remote_conn.disconnect()
+        if output is not None:
+            output = output.decode()
+        else:
+            messages.error(request, "No print quota found")
+            return render(request, "../templates/printQuota.html")
+        
+        return render(request, "../templates/printQuota.html",{output:"output"})
+    
     return render(request, "../templates/printQuota.html")
 
 def faq(request):

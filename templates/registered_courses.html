@@ -53,5 +53,9 @@
                     {% endfor %}
                 </tbody>
             </table>
+            {% for msg in messages %}
+            <p id="message" class="error-message">{{ msg }}</p>
+            {% endfor %}
         </div>
+        
 {% endblock %}
