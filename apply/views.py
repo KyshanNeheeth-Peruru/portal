@@ -19,6 +19,11 @@ from apply.ldap_helper import LDAPHelper
 from apply.remote_connect import RemoteConnect
 from apply.ldap import LDAP
 from django.db.models import Q
+import paramiko
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Create your views here.
 
@@ -263,19 +268,32 @@ def about_us(request):
     return render(request, "../templates/about_us.html")
 
 def printQuota(request):
-    username = request.user.username
+    userName = request.user.username
     if request.method == 'POST':
-        remote_conn = RemoteConnect()
-        command = f"sudo /usr/local/bin/edpykota -L {username}"
-        output = remote_conn.execute_command(command)
-        remote_conn.disconnect()
-        # if output is not None:
-        #     output = output.decode()
-        # else:
-        #     messages.error(request, "No print quota found")
-        #     return render(request, "../templates/printQuota.html")
+        ssh_client = paramiko.SSHClient()
+        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         
-        return render(request, "../templates/printQuota.html",{output:"output"})
+        try:
+            # ssh_client.connect('users.cs.umb.edu', username='kyshan', password='pasww')
+            # stdin, stdout, stderr = ssh_client.exec_command('cd public_html/ && ls')
+            host = env("REMOTE_HOST_d301")
+            rem_user = env("REMOTE_USER")
+            rem_pasw = env("REMOTE_PASSWORD")
+            
+            ssh_client.connect(host, 22, rem_user, rem_pasw)
+            cmd = f'sudo /usr/local/bin/edpykota -L {userName}'
+            stdin, stdout, stderr = ssh_client.exec_command(cmd)
+            
+            output = stdout.read().decode('utf-8')
+            
+            return render(request, 'printquota.html', {'output': output})
+        except Exception as e:
+            return render(request, 'printquota.html', {'error_message': str(e)})
+        finally:
+            ssh_client.close()
+        
+        
+        return render(request, "../templates/printQuota.html",{"output":output})
     
     return render(request, "../templates/printQuota.html")
 
