@@ -286,9 +286,9 @@ def printQuota(request):
             
             output = stdout.read().decode('utf-8')
             
-            return render(request, 'printquota.html', {'output': output})
+            return render(request, "../templates/printQuota.html", {'output': output})
         except Exception as e:
-            return render(request, 'printquota.html', {'error_message': str(e)})
+            return render(request, "../templates/printQuota.html", {'error_message': str(e)})
         finally:
             ssh_client.close()
         
