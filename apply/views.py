@@ -251,7 +251,7 @@ def change_password(request):
         if form.is_valid():
             user = request.user.username
             password = request.POST["new_password1"]
-            change_ldap_password(user, password)
+            #change_ldap_password(user, password)
             user = form.save()
             update_session_auth_hash(request, user)  # Important! (To keep the user logged in)
             # messages.success(request, 'Your password was successfully updated!')
@@ -260,10 +260,12 @@ def change_password(request):
             messages.error(request, 'Please correct the error below.')
     else:
         form = SetPasswordForm(request.user)
-    return render(request, '../templates/registration/change_password.html', {
-        'form': form
-    })
+    return render(request, '../templates/registration/change_password.html', {'form': form})
 
+def forgot_password(request):
+    return render(request, "../templates/registration/password_reset_form.html")
+
+    
 def about_us(request):
     return render(request, "../templates/about_us.html")
 

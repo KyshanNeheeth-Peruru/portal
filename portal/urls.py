@@ -28,7 +28,7 @@ urlpatterns = [
     path('login/', apply_views.login_view, name='login'),
     path('courses_list/', apply_views.courses_list_view, name='courses_list'),
     path("register/", apply_views.register_view),
-    path('password_reset/', apply_views.change_password, name='forgotpasw'),
+    path('forgot_password/', apply_views.forgot_password, name='forgotpasw'),
     path('logout/', apply_views.logout_view, name='logout'),
     path("activate/<uidb64>/<token>", apply_views.verification_view, name="activate"),
     path("courses/", apply_views.selected_courses),
