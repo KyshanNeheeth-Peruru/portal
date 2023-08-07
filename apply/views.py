@@ -21,6 +21,7 @@ from apply.ldap import LDAP
 from django.db.models import Q
 import paramiko
 import environ
+import re
 
 env = environ.Env()
 environ.Env.read_env()
@@ -130,7 +131,9 @@ def courses_list_view(request):
     current_semester = Semesters.objects.filter(is_active=True).first()
     courses = Courses.objects.filter(course_semester=current_semester).order_by("course_number")
     #courses = Courses.objects.all()
-    return render(request,"courses.html",{"courses": courses, "current_semester": current_semester})
+    registered_courses = UserCourses.objects.filter(semester_year=current_semester, user=request.user)
+    available_courses = Courses.objects.filter(course_semester=current_semester).exclude(id__in=registered_courses.values('course'))
+    return render(request,"courses.html",{"courses": available_courses, "current_semester": current_semester})
 
 def logout_view(request):
     logout(request)
@@ -247,22 +250,74 @@ def registered_courses(request):
 # @login_required(login_url="/accounts/login/")
 def change_password(request):
     if request.method == 'POST':
-        form = SetPasswordForm(request.user, request.POST)
-        if form.is_valid():
-            user = request.user.username
-            password = request.POST["new_password1"]
-            #change_ldap_password(user, password)
-            user = form.save()
-            update_session_auth_hash(request, user)  # Important! (To keep the user logged in)
-            # messages.success(request, 'Your password was successfully updated!')
-            return render(request, '../templates/registration/change_password_complete.html')
+        new_password1 = request.POST.get('new_password1')
+        new_password2 = request.POST.get('new_password2')
+        if new_password1 == new_password2:
+            user = request.user
+            unix_name=user.username.lower()
+            if (len(unix_name) >= 3 and unix_name in new_password1) or (unix_name in new_password1):
+                messages.error(request, 'Password may not contain username.')
+                return render(request, '../templates/registration/change_password.html')
+            
+            if (len(new_password1) <8):
+                messages.error(request, 'Password need to be more than 8 Characters.')
+                return render(request, '../templates/registration/change_password.html')
+                
+            categories = [
+                r'[A-Z\u00C0-\u02AF\u0370-\u1FFF\u2C00-\uD7FF]',  # Uppercase letters
+                r'[a-z\u00C0-\u02AF\u0370-\u1FFF\u2C00-\uD7FF]',  # Lowercase letters
+                r'\d',  # Digits
+                r'[\W_]',  # Special characters
+                r'[^\W\d_a-zA-Z\u00C0-\u02AF\u0370-\u1FFF\u2C00-\uD7FF]',  # Unicode alphabetic characters
+            ]
+            
+            categories_present = sum(bool(re.search(pattern, new_password1)) for pattern in categories)
+            
+            if categories_present < 3:
+                messages.error(request, 'Password must include characters from at least 3 categories.')
+                return render(request, '../templates/registration/change_password.html')
+            
+
+            
+            user.set_password(new_password1)
+            #change_ldap_password(user, password1)
+            user.save()
+            update_session_auth_hash(request, user)
+            messages.success(request,'Password successfully changed.')
+            return render(request, '../templates/registration/change_password.html')
         else:
-            messages.error(request, 'Please correct the error below.')
-    else:
-        form = SetPasswordForm(request.user)
-    return render(request, '../templates/registration/change_password.html', {'form': form})
+            messages.error(request,'Passwords dont match.')
+            return render(request, '../templates/registration/change_password.html')
+    return render(request, '../templates/registration/change_password.html')
+        
+    #     if form.is_valid():
+    #         user = request.user.username
+    #         password = request.POST["new_password1"]
+    #         #change_ldap_password(user, password)
+    #         user = form.save()
+    #         update_session_auth_hash(request, user)  # Important! (To keep the user logged in)
+    #         # messages.success(request, 'Your password was successfully updated!')
+    #         return render(request, '../templates/registration/change_password_complete.html')
+    #     else:
+    #         messages.error(request, 'Please correct the error below.')
+    # else:
+    #     form = SetPasswordForm(request.user)
+    # return render(request, '../templates/registration/change_password.html', {'form': form})
 
 def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        if email:
+            if User.objects.filter(email=email).exists():
+                messages.success(request, 'Password recovery email sent.')
+                return render(request, '../templates/registration/password_reset_form.html')
+            else:
+                messages.error(request, 'No user found with this email address.')
+                return render(request, '../templates/registration/password_reset_form.html')
+        else:
+            messages.error(request, 'Please enter valid email address.')
+            return render(request, '../templates/registration/password_reset_form.html')
+        
     return render(request, "../templates/registration/password_reset_form.html")
 
     

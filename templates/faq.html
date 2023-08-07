@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<h3>Frequently Asked Questions</h3>
+<h3 style="text-align: center; margin-top: 20px;">Frequently Asked Questions</h3>
 
 <style>
   html {
@@ -15,18 +15,21 @@
   }
 </style>
 
-<ul>
+<ul style="list-style-type: none; padding: 0;">
   {% for faq in faqs %}
-  <li>
-    <h3><a href="#{{ faq.question }}">{{ faq.question }}</a></h3>
+  <li style="margin-bottom: 10px;">
+    <h5><a href="#{{ faq.question }}" style="font-size: 18px; font-weight: bold; text-decoration: none; color: #007bff; font-family: Arial, sans-serif;">{{ faq.question }}</a></h5>
   </li>
   {% endfor %}
 </ul>
 
 {% for faq in faqs %}
-<h3 id="{{ faq.question }}">{{ faq.question }}</h3>
-<p>{{ faq.answer }}</p>
+<div style="margin-top: 30px;">
+  <h3 id="{{ faq.question }}" style="font-size: 20px; margin-bottom: 10px;">{{ faq.question }}</h3>
+  <p style="font-size: 16px; color: #666;">{{ faq.answer }}</p>
+</div>
 {% endfor %}
-<h2>If you have any further queries or are facing issues with class registration, please email us at <a href="mailto:operator@cs.umb.edu">operator@cs.umb.edu</a>.</h2>
+
+<h3 style="text-align: center; margin-top: 30px;">If you have any further queries or are facing issues with class registration, please email us at <a href="mailto:operator@cs.umb.edu">operator@cs.umb.edu</a>.</h3>
 
 {% endblock %}

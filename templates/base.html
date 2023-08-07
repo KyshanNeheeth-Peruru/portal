@@ -39,11 +39,11 @@
 
     </style>
 </head>
-
+{% load static %}
 <body>
     <nav class="w-100 border p-1 d-flex navbar-colors flex-md-row flex-column justify-content-between">
-            
 
+        <img src="{% static 'images/Blue_logo.png' %}" alt="Logo" style="width: 60px; height: auto;">
 
             {% if user.is_authenticated %}
                 <a class="nav-link">Hi {{user.first_name}} {{user.last_name}}</a>

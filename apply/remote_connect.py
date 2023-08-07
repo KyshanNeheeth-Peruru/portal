@@ -11,7 +11,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 class RemoteConnect:
     def __init__(self):
-        self.host = env("REMOTE_HOST_d301")
+        self.host = env("REMOTE_HOST")
         self.conn_handle = None
         self.username = env("REMOTE_USER")
         self.userpass = env("REMOTE_PASSWORD")
