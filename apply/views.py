@@ -5,8 +5,8 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib import messages
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth import login, logout, get_user_model, authenticate, update_session_auth_hash
@@ -22,6 +22,7 @@ from django.db.models import Q
 import paramiko
 import environ
 import re
+from django.contrib.auth.tokens import default_token_generator
 
 env = environ.Env()
 environ.Env.read_env()
@@ -76,6 +77,52 @@ def send_activation_email(request, user):
     )
     email.send()
     logger.debug(f"Verification Email has been sent to {user_email}")
+    
+def send_password_reset_email(user):
+    token = default_token_generator.make_token(user)
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    
+    reset_url = f"http://yourwebsite.com/reset_password/{uid}/{token}/"
+
+    subject = 'Password Reset'
+    message = f'Hi {user.username}, you can reset your password by clicking the following link: {reset_url}'
+    from_email = 'noreply@cs.umb.edu'
+    recipient_list = [user.email]
+    send_mail(subject, message, from_email, recipient_list)
+    
+# def forgot_password(request):
+#     if request.method == 'POST':
+#         email = request.POST.get('email')
+        
+#         if email:
+#             try:
+#                 user=User.objects.get(email=email)
+#                 send_password_reset_email(user)
+#                 messages.success(request,"Password recovery link sent to the email address.")
+#             except User.DoesNotExist:
+#                 messages.error(request, 'No user found with this email address.')
+#         else:
+#             messages.error(request, 'Please provide a valid email address.')
+#     return render(request, '../templates/registration/password_reset_form.html')
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        if email:
+            if User.objects.filter(email=email).exists():
+                user=User.objects.get(email=email)
+                send_password_reset_email(user)
+                messages.success(request, 'Password recovery email sent.')
+                return render(request, '../templates/registration/password_reset_form.html')
+            else:
+                messages.error(request, 'No user found with this email address.')
+                return render(request, '../templates/registration/password_reset_form.html')
+        else:
+            messages.error(request, 'Please enter valid email address.')
+            return render(request, '../templates/registration/password_reset_form.html')
+        
+    return render(request, "../templates/registration/password_reset_form.html")
+            
 
 
 def register_view(request):
@@ -127,6 +174,7 @@ def login_view(request):
 
     return render(request, 'home.html')
 
+@login_required
 def courses_list_view(request):
     current_semester = Semesters.objects.filter(is_active=True).first()
     courses = Courses.objects.filter(course_semester=current_semester).order_by("course_number")
@@ -199,6 +247,7 @@ def logout_view(request):
 #             {"courses": courses, "current_semester": current_semester},
 #         )
 
+@login_required
 def selected_courses(request):
     current_semester = Semesters.objects.filter(is_active=True).first()
     if request.method == "POST":
@@ -230,7 +279,7 @@ def selected_courses(request):
     
     
 
-# @login_required(login_url="/accounts/login/")
+@login_required
 def registered_courses(request):
     current_semester = Semesters.objects.filter(is_active=True).first()
     courses = UserCourses.objects.filter(semester_year=current_semester, user_id=request.user.id).order_by("course")
@@ -247,7 +296,7 @@ def registered_courses(request):
     return render(request,"../templates/registered_courses.html",{"current_semester": current_semester, "courses": courses_list})
 
 
-# @login_required(login_url="/accounts/login/")
+@login_required
 def change_password(request):
     if request.method == 'POST':
         new_password1 = request.POST.get('new_password1')
@@ -304,26 +353,11 @@ def change_password(request):
     #     form = SetPasswordForm(request.user)
     # return render(request, '../templates/registration/change_password.html', {'form': form})
 
-def forgot_password(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        if email:
-            if User.objects.filter(email=email).exists():
-                messages.success(request, 'Password recovery email sent.')
-                return render(request, '../templates/registration/password_reset_form.html')
-            else:
-                messages.error(request, 'No user found with this email address.')
-                return render(request, '../templates/registration/password_reset_form.html')
-        else:
-            messages.error(request, 'Please enter valid email address.')
-            return render(request, '../templates/registration/password_reset_form.html')
-        
-    return render(request, "../templates/registration/password_reset_form.html")
-
     
 def about_us(request):
     return render(request, "../templates/about_us.html")
 
+@login_required
 def printQuota(request):
     userName = request.user.username
     if request.method == 'POST':
@@ -358,6 +392,7 @@ def faq(request):
     faqs=Faq.objects.all()
     return render(request, "../templates/faq.html",{'faqs':faqs})
 
+@login_required
 def lablist(request):
     sems=reversed(Semesters.objects.all())
     if request.method == 'POST':
@@ -367,7 +402,6 @@ def lablist(request):
         # faculty=(User.objects.filter(usercourses__course__course_semester__semester_longname=selected_sem,groups__name='Faculty').distinct().order_by('last_name'))
         return render(request, "../templates/lab_list.html",{'sems':sems,'selected_sem':selected_sem,'lab_list':allusers})
     return render(request, "../templates/lab_list.html",{'sems':sems})
-
 
 def admin_view(request):
     form = AdminView()

@@ -29,6 +29,8 @@ urlpatterns = [
     path('courses_list/', apply_views.courses_list_view, name='courses_list'),
     path("register/", apply_views.register_view),
     path('forgot_password/', apply_views.forgot_password, name='forgotpasw'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('logout/', apply_views.logout_view, name='logout'),
     path("activate/<uidb64>/<token>", apply_views.verification_view, name="activate"),
     path("courses/", apply_views.selected_courses),
