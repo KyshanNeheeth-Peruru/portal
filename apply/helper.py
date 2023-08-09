@@ -60,4 +60,4 @@ def send_email(user_name, subject, body, exception=""):
         from_email="noreply@cs.umb.edu",
         to=["portal@cs.umb.edu"],
     )
-    email.send()
+    # email.send()
