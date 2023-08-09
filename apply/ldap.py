@@ -69,9 +69,9 @@ class LDAP:
                 ldap_conn.unbind()
                 self.set_new_user_password()
             else:
-                helper.send_email(self.userName,
-                                  LDAPActionNames.USER_EXISTS,
-                                  LDAPEmailBody.USER_EXISTS)
+                # helper.send_email(self.userName,
+                #                   LDAPActionNames.USER_EXISTS,
+                #                   LDAPEmailBody.USER_EXISTS)
                 logger.debug(f"User:{self.userName}  is not added")
 
         except Exception as ex:
