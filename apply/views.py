@@ -145,7 +145,7 @@ def register_view(request):
             # user = User.objects.get(username=request.POST["username"])
             #deactivate_user(user)
             # create_ldap_user(request)
-            #send_activation_email(request, user)
+            send_activation_email(request, user)
             # return render(request, "../templates/home.html", {"activated": False})
             return render(request, "../templates/registration/register.html")
     return render(request, "../templates/registration/register.html")
