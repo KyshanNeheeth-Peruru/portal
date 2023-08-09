@@ -23,6 +23,7 @@ import paramiko
 import environ
 import re
 from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
 
 env = environ.Env()
 environ.Env.read_env()
