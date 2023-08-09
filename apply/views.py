@@ -49,9 +49,9 @@ def create_ldap_user(request):
     user = {
         "userName": request.POST["username"],
         "userPassword": request.POST["pasw1"],
-        "fullName": f"{request.POST['first_name'].capitalize()} {request.POST['last_name'].capitalize()}",
-        "firstName": request.POST["first_name"].capitalize(),
-        "lastName": request.POST["last_name"].capitalize(),
+        "fullName": f"{request.POST['firstname'].capitalize()} {request.POST['lastname'].capitalize()}",
+        "firstName": request.POST["firstname"].capitalize(),
+        "lastName": request.POST["lastname"].capitalize(),
         "email": request.POST["email"],
     }
     obj = LDAP(**user)
