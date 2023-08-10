@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 class LDAP:
     def __init__(self, **kwargs):
         self.server_uri = env("SERVER_URI")
-        self.admin = "WINPCS\padmin"
-        self.password = "PortalRoot#2"
+        self.admin = env("LDAP_ADMIN")
+        self.password = env("LDAP_PASSWORD")
         self.userName = kwargs.get("userName")
         self.userPassword = kwargs.get("userPassword")
         self.fullName = kwargs.get("fullName")
