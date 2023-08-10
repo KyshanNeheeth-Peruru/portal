@@ -49,9 +49,9 @@ class LDAP:
             # username and password can be configured during openldap setup
             connection = Connection(
                 server,
-                user=self.admin,
-                password=self.password,
-                authentication=NTLM,
+                self.admin,
+                self.password,
+                client_strategy=SAFE_SYNC,
                 auto_bind=True,
             )
             # bind_response = connection.bind()  # Returns True or False
