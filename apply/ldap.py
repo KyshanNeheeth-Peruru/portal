@@ -84,7 +84,7 @@ class LDAP:
                               LDAPActionNames.ADD_NEW_USER,
                               LDAPActionNames.ADD_NEW_USER, str(ex))
 
-            logger.error(f"Error on Adding new User to LDAP. user_name: {self.admin}", ex)
+            logger.error(f"Error on Adding new User to LDAP. user_name: {self.userName}", ex)
 
     def set_new_user_password(self):
         # Bind connection to LDAP server
