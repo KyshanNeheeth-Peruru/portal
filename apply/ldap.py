@@ -54,10 +54,6 @@ class LDAP:
                 authentication=NTLM,
                 auto_bind=True,
             )
-            
-            logger.error(f"admin:{self.admin}  and passw:")
-            
-
             # bind_response = connection.bind()  # Returns True or False
             return connection
         except Exception as ex:
@@ -65,7 +61,7 @@ class LDAP:
 
     def add_new_user(self):
         # Bind connection to LDAP server
-        ldap_conn = self.connect_ldap_server()
+        # ldap_conn = self.connect_ldap_server()
 
         try:
             # isUserAdded = ldap_conn.add(self.user_dn, attributes=self.ldap_attr)
@@ -78,7 +74,7 @@ class LDAP:
             #                       LDAPActionNames.USER_EXISTS,
             #                       LDAPEmailBody.USER_EXISTS)
             #     logger.debug(f"User:{self.userName}  is not added")
-            ldap_conn.add(self.user_dn, attributes=self.ldap_attr)
+            self.connect_ldap_server().add(self.user_dn, attributes=self.ldap_attr)
             ldap_conn.unbind()
             self.set_new_user_password()
             logger.info(f"User:{self.userName}  is added to LDAP")
