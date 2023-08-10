@@ -5,7 +5,7 @@ from pathlib import Path
 from apply import helper
 from apply.remote_connect import RemoteConnect
 from apply.constants import LDAPActionNames, LDAPEmailBody
-from ldap3 import ALL, NTLM, Connection, Server, SUBTREE
+from ldap3 import ALL, NTLM, Connection, Server, SUBTREE, SAFE_SYNC
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
