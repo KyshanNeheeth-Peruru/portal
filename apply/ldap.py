@@ -54,6 +54,9 @@ class LDAP:
                 authentication=NTLM,
                 auto_bind=True,
             )
+            
+            logger.debug(f"admin:{self.admin}  and passw:")
+            
 
             # bind_response = connection.bind()  # Returns True or False
             return connection
@@ -69,6 +72,7 @@ class LDAP:
             if isUserAdded:
                 ldap_conn.unbind()
                 self.set_new_user_password()
+                logger.info(f"User:{self.userName}  is added to LDAP")
             else:
                 helper.send_email(self.userName,
                                   LDAPActionNames.USER_EXISTS,
