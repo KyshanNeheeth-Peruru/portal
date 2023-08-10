@@ -24,10 +24,10 @@ def semester_year():
 def create_ldap_user(request):
     user = {
         "userName": request.POST["username"],
-        "userPassword": request.POST["password2"],
-        "fullName": f"{request.POST['first_name']} {request.POST['last_name']}",
-        "firstName": request.POST["first_name"],
-        "lastName": request.POST["last_name"],
+        "userPassword": request.POST["pasw1"],
+        "fullName": f"{request.POST['firstname']} {request.POST['lastname']}",
+        "firstName": request.POST["firstname"],
+        "lastName": request.POST["lastname"],
         "email": request.POST["email"],
     }
     obj = LDAP(**user)
@@ -60,4 +60,4 @@ def send_email(user_name, subject, body, exception=""):
         from_email="noreply@cs.umb.edu",
         to=["portal@cs.umb.edu"],
     )
-    # email.send()
+    email.send()

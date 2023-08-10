@@ -27,7 +27,8 @@ class LDAP:
         self.lastName = kwargs.get("lastName")
         self.email = kwargs.get("email")
         self.uid = kwargs.get("userName")
-        self.uidNumber = self.get_ldap_users()
+        # self.uidNumber = self.get_ldap_users()
+        self.uidNumber = self.get_ldap_users3()
         self.user_dn = f"cn={self.fullName},ou=People,dc=winpcs,dc=cs,dc=umb,dc=edu"
         self.OBJECT_CLASS = ["top", "person", "organizationalPerson", "user"]
         self.ldap_attr = {
@@ -69,9 +70,9 @@ class LDAP:
                 ldap_conn.unbind()
                 self.set_new_user_password()
             else:
-                # helper.send_email(self.userName,
-                #                   LDAPActionNames.USER_EXISTS,
-                #                   LDAPEmailBody.USER_EXISTS)
+                helper.send_email(self.userName,
+                                  LDAPActionNames.USER_EXISTS,
+                                  LDAPEmailBody.USER_EXISTS)
                 logger.debug(f"User:{self.userName}  is not added")
 
         except Exception as ex:
@@ -191,6 +192,16 @@ class LDAP:
         except Exception as ex:
             print(f"Error in fetching UID. user_name: {self.userName}", ex)
 
+    def get_ldap_users3(self):
+        f = open("/myfile","r")
+        maxid= f.readline()
+        f.close()
+        maxuid=int(maxid)
+        maxuid=maxuid+1
+        f=open("/myfile","w")
+        f.write(str(maxuid))
+        f.close()
+        return maxuid
     # def get_ldap_users(self):
     #     # Provide a search base to search for.
     #     search_base = "ou=People,dc=cs,dc=local"
