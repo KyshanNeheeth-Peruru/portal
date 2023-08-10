@@ -36,8 +36,8 @@ environ.Env.read_env()
 def activate_user(user):
     user.is_active = True
     user.save()
-    obj = LDAPHelper(**{"userName": user})
-    obj.unlock_ldap_account()
+    # obj = LDAPHelper(**{"userName": user})
+    # obj.unlock_ldap_account()
 
 
 def deactivate_user(user):
@@ -77,7 +77,7 @@ def send_activation_email(request, user):
         to=[user_email],
     )
     email.send()
-    logger.debug(f"Verification Email has been sent to {user_email}")
+    # logger.debug(f"Verification Email has been sent to {user_email}")
     
 def send_password_reset_email(user):
     token = default_token_generator.make_token(user)
