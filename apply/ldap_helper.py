@@ -4,7 +4,7 @@ import environ
 from pathlib import Path
 from apply import helper
 from apply.constants import LDAPActionNames, LDAPEmailBody
-from ldap3 import ALL, Server, Connection, NTLM, SUBTREE
+from ldap3 import ALL, Server, Connection, NTLM, SUBTREE, SAFE_SYNC
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
@@ -30,9 +30,9 @@ class LDAPHelper:
             # username and password can be configured during openldap setup
             connection = Connection(
                 server,
-                user=self.admin,
-                password=self.password,
-                authentication=NTLM,
+                self.admin,
+                self.password,
+                client_strategy=SAFE_SYNC,
                 auto_bind=True,
             )
 
