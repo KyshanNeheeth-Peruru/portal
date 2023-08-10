@@ -138,14 +138,14 @@ def register_view(request):
             messages.error(request,"Passwords dont match")
             return redirect('register')
         else:
-            # user = User.objects.create_user(username,email,pasw1)
-            # user.first_name = firstname
-            # user.last_name = lastname
-            # user.save()
-            # user = User.objects.get(username=request.POST["username"])
-            #deactivate_user(user)
-            create_ldap_user(request)
-            #send_activation_email(request, user)
+            user = User.objects.create_user(username,email,pasw1)
+            user.first_name = firstname
+            user.last_name = lastname
+            user.save()
+            user = User.objects.get(username=request.POST["username"])
+            deactivate_user(user)
+            # create_ldap_user(request)
+            send_activation_email(request, user)
             # return render(request, "../templates/home.html", {"activated": False})
             return render(request, "../templates/registration/register.html")
     return render(request, "../templates/registration/register.html")
