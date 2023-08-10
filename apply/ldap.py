@@ -54,30 +54,33 @@ class LDAP:
                 authentication=NTLM,
                 auto_bind=True,
             )
-            # bind_response = connection.bind()  # Returns True or False
-            return connection
+            bind_response = connection.bind()  # Returns True or False
+            return bind_response
         except Exception as ex:
             logger.error("Error in Connecting to ldap server", ex)
 
     def add_new_user(self):
         # Bind connection to LDAP server
-        # ldap_conn = self.connect_ldap_server()
+        ldap_conn = self.connect_ldap_server()
 
         try:
-            # isUserAdded = ldap_conn.add(self.user_dn, attributes=self.ldap_attr)
-            # if isUserAdded:
-            #     ldap_conn.unbind()
-            #     self.set_new_user_password()
-            #     logger.info(f"User:{self.userName}  is added to LDAP")
-            # else:
-            #     helper.send_email(self.userName,
-            #                       LDAPActionNames.USER_EXISTS,
-            #                       LDAPEmailBody.USER_EXISTS)
-            #     logger.debug(f"User:{self.userName}  is not added")
-            self.connect_ldap_server().add(self.user_dn, attributes=self.ldap_attr)
-            ldap_conn.unbind()
-            self.set_new_user_password()
-            logger.info(f"User:{self.userName}  is added to LDAP")
+            isUserAdded = ldap_conn.add(self.user_dn, attributes=self.ldap_attr)
+            if isUserAdded:
+                ldap_conn.unbind()
+                self.set_new_user_password()
+                logger.info(f"User:{self.userName}  is added to LDAP")
+            else:
+                helper.send_email(self.userName,
+                                  LDAPActionNames.USER_EXISTS,
+                                  LDAPEmailBody.USER_EXISTS)
+                logger.debug(f"User:{self.userName}  is not added")
+            
+            
+            
+            # self.connect_ldap_server().add(self.user_dn, attributes=self.ldap_attr)
+            # ldap_conn.unbind()
+            # self.set_new_user_password()
+            # logger.info(f"User:{self.userName}  is added to LDAP")
 
         except Exception as ex:
             helper.send_email(self.userName,
