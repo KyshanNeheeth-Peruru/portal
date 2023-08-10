@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 class LDAP:
     def __init__(self, **kwargs):
         self.server_uri = env("SERVER_URI")
-        self.admin = env("LDAP_ADMIN")
-        self.password = env("LDAP_PASSWORD")
+        self.admin = "WINPCS\padmin"
+        self.password = "PortalRoot#2"
         self.userName = kwargs.get("userName")
         self.userPassword = kwargs.get("userPassword")
         self.fullName = kwargs.get("fullName")
@@ -68,16 +68,20 @@ class LDAP:
         ldap_conn = self.connect_ldap_server()
 
         try:
-            isUserAdded = ldap_conn.add(self.user_dn, attributes=self.ldap_attr)
-            if isUserAdded:
-                ldap_conn.unbind()
-                self.set_new_user_password()
-                logger.info(f"User:{self.userName}  is added to LDAP")
-            else:
-                helper.send_email(self.userName,
-                                  LDAPActionNames.USER_EXISTS,
-                                  LDAPEmailBody.USER_EXISTS)
-                logger.debug(f"User:{self.userName}  is not added")
+            # isUserAdded = ldap_conn.add(self.user_dn, attributes=self.ldap_attr)
+            # if isUserAdded:
+            #     ldap_conn.unbind()
+            #     self.set_new_user_password()
+            #     logger.info(f"User:{self.userName}  is added to LDAP")
+            # else:
+            #     helper.send_email(self.userName,
+            #                       LDAPActionNames.USER_EXISTS,
+            #                       LDAPEmailBody.USER_EXISTS)
+            #     logger.debug(f"User:{self.userName}  is not added")
+            ldap_conn.add(self.user_dn, attributes=self.ldap_attr)
+            ldap_conn.unbind()
+            self.set_new_user_password()
+            logger.info(f"User:{self.userName}  is added to LDAP")
 
         except Exception as ex:
             helper.send_email(self.userName,
