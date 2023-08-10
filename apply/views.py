@@ -36,8 +36,8 @@ environ.Env.read_env()
 def activate_user(user):
     user.is_active = True
     user.save()
-    # obj = LDAPHelper(**{"userName": user})
-    # obj.unlock_ldap_account()
+    obj = LDAPHelper(**{"userName": user})
+    obj.unlock_ldap_account()
 
 
 def deactivate_user(user):
@@ -144,7 +144,7 @@ def register_view(request):
             user.save()
             user = User.objects.get(username=request.POST["username"])
             deactivate_user(user)
-            # create_ldap_user(request)
+            create_ldap_user(request)
             send_activation_email(request, user)
             # return render(request, "../templates/home.html", {"activated": False})
             return render(request, "../templates/registration/register.html")
@@ -157,7 +157,7 @@ login_name = ""
 def verification_view(request, uidb64, token):
     user = User.objects.get(username=login_name)
     activate_user(user)
-    logger.debug("Verification link has been generated")
+    # logger.debug("Verification link has been generated")
     return render(request, "../templates/home.html", {"activated": True})
 
 def login_view(request):
