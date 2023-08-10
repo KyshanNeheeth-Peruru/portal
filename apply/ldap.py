@@ -54,8 +54,9 @@ class LDAP:
                 authentication=NTLM,
                 auto_bind=True,
             )
-            bind_response = connection.bind()  # Returns True or False
-            return bind_response
+            # bind_response = connection.bind()  # Returns True or False
+            logger.info(f"LDAP Connection established..")
+            return connection
         except Exception as ex:
             logger.error("Error in Connecting to ldap server", ex)
 
@@ -83,9 +84,9 @@ class LDAP:
             # logger.info(f"User:{self.userName}  is added to LDAP")
 
         except Exception as ex:
-            helper.send_email(self.userName,
-                              LDAPActionNames.ADD_NEW_USER,
-                              LDAPActionNames.ADD_NEW_USER, str(ex))
+            # helper.send_email(self.userName,
+            #                   LDAPActionNames.ADD_NEW_USER,
+            #                   LDAPActionNames.ADD_NEW_USER, str(ex))
 
             logger.error(f"Error on Adding new User to LDAP. user_name: {self.userName}", ex)
 
