@@ -136,7 +136,7 @@ def register_view(request):
         pasw2= request.POST['pasw2']
         if(pasw1!=pasw2):
             messages.error(request,"Passwords dont match")
-            return redirect('signup')
+            return redirect('register')
         else:
             user = User.objects.create_user(username,email,pasw1)
             user.first_name = firstname
