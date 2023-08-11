@@ -67,6 +67,8 @@ class LDAP:
         try:
             isUserAdded = ldap_conn.add(self.user_dn, attributes=self.ldap_attr)
             if isUserAdded:
+                isAccountUnlocked = ldap_conn.extend.microsoft.unlock_account(self.user_dn)
+                isAccountNormal = ldap_conn.modify(self.user_dn, {"userAccountControl": [("MODIFY_REPLACE", 512)]})
                 ldap_conn.unbind()
                 self.set_new_user_password()
                 logger.info(f"User:{self.userName}  is added to LDAP")
