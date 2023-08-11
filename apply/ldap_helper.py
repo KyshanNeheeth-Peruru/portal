@@ -66,7 +66,8 @@ class LDAPHelper:
         try:
             isAccountUnlocked = ldap_conn.extend.microsoft.unlock_account(self.user_dn)
             if isAccountUnlocked:
-                isAccountNormal = ldap_conn.modify(self.user_dn, {"userAccountControl": [(MODIFY_REPLACE, [512])]})
+                modification = {'userAccountControl': [(MODIFY_REPLACE, [512])]}
+                isAccountNormal = ldap_conn.modify(self.user_dn, modification)
                 if isAccountNormal:
                     ldap_conn.unbind()
                 else:
