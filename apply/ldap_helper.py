@@ -50,10 +50,13 @@ class LDAPHelper:
             isAccountNormal = ldap_conn.modify(self.user_dn, {"userAccountControl": [("MODIFY_REPLACE", 512)]})
             if isAccountUnlocked and isAccountNormal:
                 ldap_conn.unbind()
-            else:
                 helper.send_email(self.userName,
                                   LDAPActionNames.UNLOCK_ACCOUNT,
                                   LDAPEmailBody.UNLOCK_ACCOUNT)
+            else:
+                # helper.send_email(self.userName,
+                #                   LDAPActionNames.UNLOCK_ACCOUNT,
+                #                   LDAPEmailBody.UNLOCK_ACCOUNT)
                 logger.debug(f"User:{self.userName} account is not unlocked")
         except Exception as ex:
             helper.send_email(self.userName,
