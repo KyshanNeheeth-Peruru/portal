@@ -41,27 +41,49 @@ class LDAPHelper:
         except Exception as ex:
             logger.error(ex)
 
-    def unlock_ldap_account(self):
-        # Bind connection to LDAP server
-        ldap_conn = self.connect_ldap_server()
+    # def unlock_ldap_account(self):
+    #     # Bind connection to LDAP server
+    #     ldap_conn = self.connect_ldap_server()
 
+    #     try:
+    #         isAccountUnlocked = ldap_conn.extend.microsoft.unlock_account(self.user_dn)
+    #         isAccountNormal = ldap_conn.modify(self.user_dn, {"userAccountControl": [("MODIFY_REPLACE", 512)]})
+    #         if isAccountUnlocked and isAccountNormal:
+    #             ldap_conn.unbind()
+    #         else:
+    #             helper.send_email(self.userName,
+    #                               LDAPActionNames.UNLOCK_ACCOUNT,
+    #                               LDAPEmailBody.UNLOCK_ACCOUNT)
+    #             logger.debug(f"User:{self.userName} account is not unlocked")
+    #     except Exception as ex:
+    #         helper.send_email(self.userName,
+    #                           LDAPActionNames.ERROR_UNLOCK_ACCOUNT,
+    #                           LDAPEmailBody.ERROR_UNLOCK_ACCOUNT, str(ex))
+    #         logger.error(ex)
+    
+    def unlock_ldap_account(self):
+        ldap_conn = self.connect_ldap_server()
         try:
             isAccountUnlocked = ldap_conn.extend.microsoft.unlock_account(self.user_dn)
-            isAccountNormal = ldap_conn.modify(self.user_dn, {"userAccountControl": [("MODIFY_REPLACE", 512)]})
-            if isAccountUnlocked and isAccountNormal:
-                ldap_conn.unbind()
-                helper.send_email(self.userName,
+            if isAccountUnlocked:
+                isAccountNormal = ldap_conn.modify(self.user_dn, {"userAccountControl": [(MODIFY_REPLACE, [512])]})
+                if isAccountNormal:
+                    ldap_conn.unbind()
+                else:
+                    helper.send_email(self.userName,
                                   LDAPActionNames.UNLOCK_ACCOUNT,
                                   LDAPEmailBody.UNLOCK_ACCOUNT)
+                logger.debug(f"User:{self.userName} account is not set to normal state")
             else:
-                # helper.send_email(self.userName,
-                #                   LDAPActionNames.UNLOCK_ACCOUNT,
-                #                   LDAPEmailBody.UNLOCK_ACCOUNT)
+                helper.send_email(self.userName,
+                              LDAPActionNames.UNLOCK_ACCOUNT,
+                              LDAPEmailBody.UNLOCK_ACCOUNT)
                 logger.debug(f"User:{self.userName} account is not unlocked")
+
         except Exception as ex:
             helper.send_email(self.userName,
-                              LDAPActionNames.ERROR_UNLOCK_ACCOUNT,
-                              LDAPEmailBody.ERROR_UNLOCK_ACCOUNT, str(ex))
+                          LDAPActionNames.ERROR_UNLOCK_ACCOUNT,
+                          LDAPEmailBody.ERROR_UNLOCK_ACCOUNT, str(ex))
             logger.error(ex)
 
     def add_user_to_courses(self, course):
