@@ -157,8 +157,13 @@ login_name = ""
 def verification_view(request, uidb64, token):
     user = User.objects.get(username=login_name)
     activate_user(user)
+    obj = LDAPHelper(**{"userName": user})
+    obj.unlock_ldap_account()
     # logger.debug("Verification link has been generated")
     return render(request, "../templates/home.html", {"activated": True})
+
+def forgot_pasw_view(request, uidb64,token):
+    return render(request, "../templates/registration/register.html")
 
 def login_view(request):
     if request.method == "POST":
