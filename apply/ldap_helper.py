@@ -4,7 +4,7 @@ import environ
 from pathlib import Path
 from apply import helper
 from apply.constants import LDAPActionNames, LDAPEmailBody
-from ldap3 import ALL, Server, Connection, NTLM, SUBTREE, SAFE_SYNC
+from ldap3 import ALL, Server, Connection, NTLM, SUBTREE, SAFE_SYNC, MODIFY_REPLACE
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
