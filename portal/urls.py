@@ -24,6 +24,7 @@ from apply import views as apply_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("accounts/", include("django.contrib.auth.urls")),
     path('', apply_views.login_view, name='login'),
     path('login/', apply_views.login_view, name='login'),
     path('courses_list/', apply_views.courses_list_view, name='courses_list'),
