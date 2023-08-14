@@ -144,7 +144,7 @@ def register_view(request):
             user.save()
             user = User.objects.get(username=request.POST["username"])
             deactivate_user(user)
-            # create_ldap_user(request)
+            create_ldap_user(request)
             send_activation_email(request, user)
             # return render(request, "../templates/home.html", {"activated": False})
             return render(request, "../templates/registration/register.html")
@@ -155,9 +155,8 @@ def register_view(request):
 def verification_view(request, uidb64, token):
     user = request.user
     activate_user(user)
-    # obj = LDAPHelper(**{"userName": user.username})
-    # obj.unlock_ldap_account()
-    create_ldap_user(request)
+    obj = LDAPHelper(**{"userName": user.username})
+    obj.unlock_ldap_account()
     # logger.debug("Verification link has been generated")
     return render(request, "../templates/home.html", {"activated": True})
 
