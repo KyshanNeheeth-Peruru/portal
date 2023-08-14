@@ -155,9 +155,7 @@ def register_view(request):
 def verification_view(request, uidb64, token):
     user = request.user
     activate_user(user)
-    obj = LDAPHelper(**{"userName": user.username})
-    obj.unlock_ldap_account()
-    # logger.debug("Verification link has been generated")
+    logger.debug("Verification link has been generated")
     return render(request, "../templates/home.html", {"activated": True})
 
 def forgot_pasw_view(request, uidb64,token):
