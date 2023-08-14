@@ -71,7 +71,7 @@ def send_activation_email(request, user):
         to=[user_email],
     )
     email.send()
-    # logger.debug(f"Verification Email has been sent to {user_email}")
+    logger.debug(f"Verification Email has been sent to {user_email}")
     
 def send_password_reset_email(user):
     token = default_token_generator.make_token(user)
@@ -136,13 +136,10 @@ def register_view(request):
             user.first_name = firstname
             user.last_name = lastname
             user.save()
-            user = authenticate(username=username, password=pasw1)
-            if user is not None:
-                login(request,user)
-                deactivate_user(user)
-                # create_ldap_user(request)
-                send_activation_email(request, user)
-                return render(request, "../templates/home.html", {"activated": False})
+            deactivate_user(user)
+            # create_ldap_user(request)
+            send_activation_email(request, user)
+            return render(request, "../templates/home.html", {"activated": False})
             # return render(request, "../templates/registration/register.html")
     return render(request, "../templates/registration/register.html")
 

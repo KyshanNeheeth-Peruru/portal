@@ -6,7 +6,7 @@
 {% if user.is_authenticated %}
   Hi {{ user.username }}!
   <p><a href="{% url 'logout' %}">Log Out</a></p>
-{%elif activated is False%}
+{%if activated is False%}
   <div class="alert alert-success">
     <p>Please check your email to activate your account</p>
   </div>
