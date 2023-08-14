@@ -150,7 +150,7 @@ def register_view(request):
 
 
 def verification_view(request, uidb64, token):
-    user = request.user
+    user = User.objects.get(username=login_name)
     # activate_user(user)
     user.is_active = True
     user.save()
