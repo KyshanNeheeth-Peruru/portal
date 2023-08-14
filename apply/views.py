@@ -151,7 +151,9 @@ def register_view(request):
 
 def verification_view(request, uidb64, token):
     user = request.user
-    activate_user(user)
+    # activate_user(user)
+    user.is_active = True
+    user.save()
     logger.debug("Verification link has been generated")
     return render(request, "../templates/home.html", {"activated": True})
 
