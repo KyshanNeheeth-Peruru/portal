@@ -158,8 +158,8 @@ def verification_view(request, uidb64, token):
 def activate_user(user):
     user.is_active = True
     user.save()
-    obj = LDAPHelper(**{"userName": user})
-    obj.unlock_ldap_account()
+    # obj = LDAPHelper(**{"userName": user})
+    # obj.unlock_ldap_account()
 
 def forgot_pasw_view(request, uidb64,token):
     return render(request, "../templates/registration/register.html")
