@@ -150,12 +150,19 @@ def register_view(request):
 
 
 def verification_view(request, uidb64, token):
-    user = User.objects.get(username=login_name)
-    # activate_user(user)
-    user.is_active = True
-    user.save()
-    logger.debug("Verification link has been generated")
+    try:
+        user = User.objects.get(username=login_name)
+        # activate_user(user)
+        user.is_active = True
+        user.save()
+        obj = LDAPHelper(**{"userName": user})
+        obj.unlock_ldap_account()
+        logger.debug("Verification link has been generated")
+    except Exception as ex:
+        logger.debug(f"Error during verification: {ex}")
+    
     return render(request, "../templates/home.html", {"activated": True})
+
 
 def activate_user(user):
     user.is_active = True
