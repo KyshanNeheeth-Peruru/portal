@@ -24,6 +24,10 @@ import environ
 import re
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 env = environ.Env()
 environ.Env.read_env()
