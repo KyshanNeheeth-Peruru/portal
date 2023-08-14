@@ -157,9 +157,9 @@ def verification_view(request, uidb64, token):
         user.save()
         obj = LDAPHelper(**{"userName": user})
         obj.unlock_ldap_account()
-        logger.debug("Verification link has been generated")
+        messages.success(request, "Verification link has been generated")
     except Exception as ex:
-        logger.debug(f"Error during verification: {ex}")
+        messages.error(request, f"Error during verification: {ex}")
     
     return render(request, "../templates/home.html", {"activated": True})
 
