@@ -33,12 +33,6 @@ environ.Env.read_env()
 #logger = logging.getLogger(__name__)
 
 
-def activate_user(user):
-    user.is_active = True
-    user.save()
-    obj = LDAPHelper(**{"userName": user})
-    obj.unlock_ldap_account()
-
 
 def deactivate_user(user):
     user.is_active = False
@@ -142,12 +136,14 @@ def register_view(request):
             user.first_name = firstname
             user.last_name = lastname
             user.save()
-            user = User.objects.get(username=request.POST["username"])
-            deactivate_user(user)
-            create_ldap_user(request)
-            send_activation_email(request, user)
-            # return render(request, "../templates/home.html", {"activated": False})
-            return render(request, "../templates/registration/register.html")
+            user = authenticate(username=username, password=pasw1)
+            if user is not None:
+                login(request,user)
+                deactivate_user(user)
+                # create_ldap_user(request)
+                send_activation_email(request, user)
+                return render(request, "../templates/home.html", {"activated": False})
+            # return render(request, "../templates/registration/register.html")
     return render(request, "../templates/registration/register.html")
 
 
@@ -157,6 +153,12 @@ def verification_view(request, uidb64, token):
     activate_user(user)
     logger.debug("Verification link has been generated")
     return render(request, "../templates/home.html", {"activated": True})
+
+def activate_user(user):
+    user.is_active = True
+    user.save()
+    obj = LDAPHelper(**{"userName": user})
+    obj.unlock_ldap_account()
 
 def forgot_pasw_view(request, uidb64,token):
     return render(request, "../templates/registration/register.html")
