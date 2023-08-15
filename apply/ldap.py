@@ -67,6 +67,8 @@ class LDAP:
         try:
             isUserAdded = ldap_conn.add(self.user_dn, attributes=self.ldap_attr)
             if isUserAdded:
+                ldap_conn.extend.microsoft.unlock_account(self.user_dn)  #unlocking here
+                ldap_conn.modify(self.user_dn, {"userAccountControl": [("MODIFY_REPLACE", 512)]})    #unlocking here
                 ldap_conn.unbind()
                 self.set_new_user_password()
                 logger.info(f"User:{self.userName}  is added to LDAP")
@@ -211,6 +213,20 @@ class LDAP:
         f.write(str(maxuid))
         f.close()
         return maxuid
+
+    # def get_ldap_users3(self):
+    #     file_path = r"C:\Users\kisha\portal_workspace\myfile"
+        
+    #     with open(file_path, "r") as f:
+    #         maxid = f.readline()
+
+    #     maxuid = int(maxid) + 1
+
+    #     with open(file_path, "w") as f:
+    #         f.write(str(maxuid))
+
+    #     return maxuid
+    
     # def get_ldap_users(self):
     #     # Provide a search base to search for.
     #     search_base = "ou=People,dc=cs,dc=local"
