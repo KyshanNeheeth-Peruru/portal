@@ -61,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "apply.middleware.MiddleWare",  # custom middleware to intercept API calls
 ]
 
 ROOT_URLCONF = 'portal.urls'
