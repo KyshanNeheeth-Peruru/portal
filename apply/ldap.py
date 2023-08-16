@@ -39,7 +39,7 @@ class LDAP:
             "sn": self.lastName,
             "sAMAccountName": self.userName,
             "userPrincipalName": f"{self.userName}@winpcs.cs.umb.edu",
-            "userAccountControl": 512,
+            #"userAccountControl": 512,
         }
 
     def connect_ldap_server(self):
@@ -69,7 +69,7 @@ class LDAP:
             isUserAdded = ldap_conn.add(self.user_dn, attributes=self.ldap_attr)
             if isUserAdded:
                 #ldap_conn.extend.microsoft.unlock_account(self.user_dn)  #unlocking here
-                #ldap_conn.modify(self.user_dn, {"userAccountControl": [("MODIFY_REPLACE", 512)]})    #unlocking here
+                #ldap_conn.modify(self.user_dn, {"userAccountControl": [("MODIFY_REPLACE", 512)]})"userAccountControl": [("MODIFY_REPLACE", 512)]})    #unlocking here
                 ldap_conn.unbind()
                 self.set_new_user_password()
                 logger.info(f"User:{self.userName}  is added to LDAP")
@@ -126,6 +126,7 @@ class LDAP:
                     "uid": [("MODIFY_REPLACE", self.uid)],
                     "uidNumber": [("MODIFY_REPLACE", self.uidNumber)],
                     "mail": [("MODIFY_REPLACE", self.email)],
+                    "userAccountControl": [("MODIFY_REPLACE", 512)],
                 },
             )
             if isAccountNormal:
