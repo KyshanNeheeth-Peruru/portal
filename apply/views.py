@@ -141,7 +141,7 @@ def register_view(request):
             user.last_name = lastname
             user.save()
             deactivate_user(user)
-            create_ldap_user(request)
+            # create_ldap_user(request)
             send_activation_email(request, user)
             return render(request, "../templates/home.html", {"activated": False})
             # return render(request, "../templates/registration/register.html")
@@ -155,6 +155,7 @@ def verification_view(request, uidb64, token):
         # activate_user(user)
         user.is_active = True
         user.save()
+        create_ldap_user(request)
         # obj = LDAPHelper(**{"userName": user})
         # obj = LDAPHelper(userName=user.username)
         # obj.unlock_ldap_account()
