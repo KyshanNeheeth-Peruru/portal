@@ -132,19 +132,45 @@ def register_view(request):
         email= request.POST['email']
         pasw1= request.POST['pasw1']
         pasw2= request.POST['pasw2']
+        if not email.endswith("@umb.edu"):
+            messages.error(request, "Email must be from @umb.edu domain")
+            return render(request, "../templates/registration/register.html")
         if(pasw1!=pasw2):
             messages.error(request,"Passwords dont match")
-            return redirect('register')
+            return render(request, "../templates/registration/register.html")
         else:
+            unix_name=username.lower()
+            if (len(unix_name) >= 3 and unix_name in pasw1) or (unix_name in pasw2):
+                messages.error(request, 'Password may not contain username.')
+                return render(request, "../templates/registration/register.html")
+            
+            if (len(pasw1) <8):
+                messages.error(request, 'Password need to be more than 8 Characters.')
+                return render(request, "../templates/registration/register.html")
+                
+            categories = [
+                r'[A-Z\u00C0-\u02AF\u0370-\u1FFF\u2C00-\uD7FF]',  # Uppercase letters
+                r'[a-z\u00C0-\u02AF\u0370-\u1FFF\u2C00-\uD7FF]',  # Lowercase letters
+                r'\d',  # Digits
+                r'[\W_]',  # Special characters
+                r'[^\W\d_a-zA-Z\u00C0-\u02AF\u0370-\u1FFF\u2C00-\uD7FF]',  # Unicode alphabetic characters
+            ]
+            
+            categories_present = sum(bool(re.search(pattern, pasw1)) for pattern in categories)
+            
+            if categories_present < 3:
+                messages.error(request, 'Password must include characters from at least 3 categories.')
+                return render(request, "../templates/registration/register.html")
+            
             user = User.objects.create_user(username,email,pasw1)
             user.first_name = firstname
             user.last_name = lastname
             user.save()
             deactivate_user(user)
-            create_ldap_user(request)
-            send_activation_email(request, user)
+            # create_ldap_user(request)
+            # send_activation_email(request, user)
             return render(request, "../templates/home.html", {"activated": False})
-            # return render(request, "../templates/registration/register.html")
+            # return render(request, "../templates/registration/register.html")      
     return render(request, "../templates/registration/register.html")
 
 
