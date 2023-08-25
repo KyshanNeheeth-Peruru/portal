@@ -32,9 +32,9 @@
   <h4>List for {{ selected_sem }} : <button onclick="copyList()">Copy List</button> </h4>
   {% comment %} <button onclick="copyList()">Copy List</button> {% endcomment %}
   <ul id="list-text">
-\documentclass{article}<br />
-\usepackage[margin=0.5in]{geometry}<br />
-\usepackage{multicol}<br />
+\documentclass{article}<br/>
+\usepackage[margin=0.5in]{geometry}<br/>
+\usepackage{multicol}<br/>
 \begin{document} <br/>
   \begin{multicols}{3} <br/>
     \begin{itemize} <br/>
@@ -43,10 +43,10 @@
         \item[] {{ user.last_name }} {{ user.first_name }} <br/>
         {%endif%}
       {% endfor %}
-    \end{itemize}
-  \end{multicols}<br />
+    \end{itemize}<br/>
+  \end{multicols}<br/>
 {% comment %} \end{usepackage}<br /> {% endcomment %}
-\end{document}<br />
+\end{document}<br/>
   </ul>
 
   {% comment %} <h5> Faculty : <button onclick="copyFacList()">Copy List</button> </h5>
