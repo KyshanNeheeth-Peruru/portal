@@ -36,14 +36,16 @@
 \usepackage[margin=0.5in]{geometry}<br />
 \usepackage{multicol}<br />
 \begin{document} <br/>
-  \begin{multicols}{3} <br />
-    \begin{itemize}
+  \begin{multicols}{3} <br/>
+    \begin{itemize} <br/>
       {% for user in lab_list %}
-        \item[] {{ user.last_name }} {{ user.first_name }} <br />
+        {% if user.last_name %}
+        \item[] {{ user.last_name }} {{ user.first_name }} <br/>
+        {%endif%}
       {% endfor %}
     \end{itemize}
   \end{multicols}<br />
-\end{usepackage}<br />
+{% comment %} \end{usepackage}<br /> {% endcomment %}
 \end{document}<br />
   </ul>
 
