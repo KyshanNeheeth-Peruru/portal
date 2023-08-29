@@ -158,17 +158,20 @@ class LDAPHelper:
 
         # Establish connection to the server
         ldap_conn = self.connect_ldap_server()
-
-        try:
-            results = ldap_conn.search(search_base,
+        
+        if(ldap_conn):
+            try:
+                results = ldap_conn.search(search_base,
                                        "(&(objectClass=person)(sAMAccountName=" + str(self.userName) + "))",
                                        attributes=['cn'])
-            if results:
-                return ldap_conn.entries[0].cn[0]
-            else:
-                raise Exception
-        except Exception as e:
-            print(e)
+                if results:
+                    return ldap_conn.entries[0].cn[0]
+                else:
+                    raise Exception
+            except Exception as e:
+                print(e)
+        else:
+            print("connection error")
             
     def get_ldap_users_dn(self):
         search_base = 'ou=People,dc=winpcs,dc=cs,dc=umb,dc=edu'
