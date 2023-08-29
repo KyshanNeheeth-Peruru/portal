@@ -103,9 +103,10 @@ class LDAPHelper:
             print("names:")
             print(self.user_dn)
             print(group_dn)
-            isUserAdded = ldap_conn.extend.microsoft.add_members_to_groups(
-                self.user_dn, group_dn
-            )
+            # isUserAdded = ldap_conn.extend.microsoft.add_members_to_groups(
+            #     self.user_dn, group_dn
+            # )
+            isUserAdded=False
 
             if isUserAdded:
                 ldap_conn.unbind()
