@@ -113,9 +113,10 @@ class LDAPHelper:
                 print(self.user_dn)
                 logger.debug(f"User:{self.userName} is not added to {course}")
         except Exception as ex:
-            helper.send_email(self.userName,
-                              LDAPActionNames.ERROR_ADD_USER_TO_COURSE,
-                              LDAPEmailBody.ERROR_ADD_USER_TO_COURSE, str(ex))
+            # helper.send_email(self.userName,
+            #                   LDAPActionNames.ERROR_ADD_USER_TO_COURSE,
+            #                   LDAPEmailBody.ERROR_ADD_USER_TO_COURSE, str(ex))
+            print(ex)
             logger.error(ex)
 
     def change_password(self, password):
