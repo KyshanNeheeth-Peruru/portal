@@ -221,7 +221,7 @@ def courses_list_view(request):
     courses = Courses.objects.filter(course_semester=current_semester).order_by("course_number")
     #courses = Courses.objects.all()
     registered_courses = UserCourses.objects.filter(semester_year=current_semester, user=request.user)
-    available_courses = Courses.objects.filter(course_semester=current_semester).exclude(id__in=registered_courses.values('course'))
+    available_courses = Courses.objects.filter(course_semester=current_semester).exclude(id__in=registered_courses.values('course')).order_by("course_number")
     return render(request,"courses.html",{"courses": available_courses, "current_semester": current_semester})
 
 def logout_view(request):
