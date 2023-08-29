@@ -20,7 +20,7 @@ class LDAPHelper:
         self.password = env("LDAP_PASSWORD")
         self.userName = kwargs.get("userName")
         self.fullName = self.get_ldap_users()
-        self.user_dn = f"cn={self.fullName},ou=People,dc=winpcs,dc=cs,dc=umb,dc=edu"
+        self.user_dn = self.get_ldap_users()
 
     def connect_ldap_server(self):
         try:
@@ -155,9 +155,9 @@ class LDAPHelper:
         try:
             results = ldap_conn.search(search_base,
                                        "(&(objectClass=person)(sAMAccountName=" + str(self.userName) + "))",
-                                       attributes=['cn'])
+                                       attributes=['dn'])
             if results:
-                return ldap_conn.entries[0].cn[0]
+                return ldap_conn.entries[0].dn[0]
             else:
                 raise Exception
         except Exception as e:
