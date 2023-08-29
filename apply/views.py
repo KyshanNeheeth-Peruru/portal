@@ -304,15 +304,14 @@ def selected_courses(request):
             user_course_exists = UserCourses.objects.filter(user=user, course=course, semester_year=current_semester.semester_longname).exists()
             
             if not user_course_exists:
-                user_course = UserCourses.objects.create(user=user, course=course, semester_year=current_semester.semester_longname, enrolled=True)
+                # user_course = UserCourses.objects.create(user=user, course=course, semester_year=current_semester.semester_longname, enrolled=True)
                 selectedCourse = course.course_number
                 selectedCourseSection = course.course_section
                 prof_unix_name= course.course_instructor
                 ldapCourseSection = f"{selectedCourse}-{selectedCourseSection}" #ldap
                 graderGroup = f"{selectedCourse}-{selectedCourseSection}G" #ldap
                 # uid = obj.get_uid_number() #ldap
-                fullname_user = user.first_name + " " + user.last_name
-                obj.add_user_to_courses(ldapCourseSection, fullname_user) #ldap
+                obj.add_user_to_courses(ldapCourseSection) #ldap
                 
                 
                 # remote_connection.execute_command(f"sudo python3 /srv/course_directory.py -user {userName} "
