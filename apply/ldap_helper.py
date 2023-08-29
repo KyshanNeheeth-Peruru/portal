@@ -171,15 +171,13 @@ class LDAPHelper:
         # Provide a search base to search for.
         search_base = 'ou=People,dc=winpcs,dc=cs,dc=umb,dc=edu'
         # provide a uidNumber to search for. '*" to fetch all users/groups
-        search_filter = "(dn=*)"
+        search_filter =  f"(sAMAccountName={self.userName})"
 
         # Establish connection to the server
         ldap_conn = self.connect_ldap_server()
 
         try:
-            results = ldap_conn.search(search_base,
-                                       "(&(objectClass=person)(sAMAccountName=" + str(self.userName) + "))",
-                                       attributes=['dn'])
+            results = ldap_conn.search(search_base,search_filter,attributes=['dn'])
             if results:
                 return ldap_conn.entries[0].dn[0]
             else:

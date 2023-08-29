@@ -315,13 +315,6 @@ def selected_courses(request):
                 # remote_connection.execute_command(f"sudo python3 /srv/course_directory.py -user {userName} "
                 #                               f"-course {selectedCourse} -sem {cur_sem_abbrev} "
                 #                               f"-prof {prof_unix_name} -uid {uid} -graderGroup {graderGroup}")
-                print(userName )
-                print(selectedCourse )
-                print(cur_sem_abbrev )
-                print(prof_unix_name )
-                print(graderGroup )
-                print(uid )
-                print(ldapCourseSection)
             else:
                 messages.error(request, f"You already have the course {course.course_number} :  {course.course_name}  for the current semester.")
         
