@@ -173,9 +173,9 @@ class LDAPHelper:
         ldap_conn = self.connect_ldap_server()
 
         try:
-            results = ldap_conn.search(search_base,"(&(objectClass=person)(sAMAccountName=" + str(self.userName) + "))",attributes=['dn'])
+            results = ldap_conn.search(search_base,"(&(objectClass=person)(sAMAccountName=" + str(self.userName) + "))",attributes=['distinguishedName'])
             if results:
-                return ldap_conn.entries[0].dn[0]
+                return ldap_conn.entries[0].distinguishedName[0]
             else:
                 raise Exception
         except Exception as e:
