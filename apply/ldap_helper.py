@@ -103,12 +103,12 @@ class LDAPHelper:
         group_dn = f"cn={course},ou=Groups,dc=winpcs,dc=cs,dc=umb,dc=edu"
 
         try:
-            print("names:")
-            print(dn_user)
-            print(group_dn)
-            # isUserAdded = ldap_conn.extend.microsoft.add_members_to_groups(
-            #     self.user_dn, group_dn
-            # )
+            # print("names:")
+            # print(dn_user)
+            # print(group_dn)
+            isUserAdded = ldap_conn.extend.microsoft.add_members_to_groups(
+                self.user_dn, group_dn
+            )
             isUserAdded=False
 
             if isUserAdded:
@@ -117,7 +117,7 @@ class LDAPHelper:
                 # helper.send_email(self.userName,
                 #                   LDAPActionNames.ADD_USER_TO_COURSE,
                 #                   LDAPEmailBody.ADD_USER_TO_COURSE)
-                print(self.user_dn)
+                # print(self.user_dn)
                 logger.debug(f"User:{self.userName} is not added to {course}")
         except Exception as ex:
             # helper.send_email(self.userName,
