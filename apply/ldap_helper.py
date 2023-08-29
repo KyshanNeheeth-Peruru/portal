@@ -100,6 +100,9 @@ class LDAPHelper:
         group_dn = f"cn={course},ou=Groups,dc=winpcs,dc=cs,dc=umb,dc=edu"
 
         try:
+            print("names:")
+            print(self.user_dn)
+            print(group_dn)
             isUserAdded = ldap_conn.extend.microsoft.add_members_to_groups(
                 self.user_dn, group_dn
             )
