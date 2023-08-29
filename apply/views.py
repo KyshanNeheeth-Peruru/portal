@@ -295,7 +295,7 @@ def selected_courses(request):
     if request.method == "POST":
         selected_course_ids = request.POST.getlist('id')
         user = request.user
-        userName = reqest.username #ldap
+        userName = request.username #ldap
         obj = LDAPHelper(**{"userName": userName}) #ldap
         remote_connection = RemoteConnect() #ldap
         
