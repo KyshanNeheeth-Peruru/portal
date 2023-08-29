@@ -310,7 +310,7 @@ def selected_courses(request):
                 prof_unix_name= course.course_instructor
                 ldapCourseSection = f"{selectedCourse}-{selectedCourseSection}" #ldap
                 graderGroup = f"{selectedCourse}-{selectedCourseSection}G" #ldap
-                uid = obj.get_uid_number() #ldap
+                # uid = obj.get_uid_number() #ldap
                 obj.add_user_to_courses(ldapCourseSection) #ldap
                 # remote_connection.execute_command(f"sudo python3 /srv/course_directory.py -user {userName} "
                 #                               f"-course {selectedCourse} -sem {cur_sem_abbrev} "
