@@ -160,6 +160,7 @@ class LDAPHelper:
         ldap_conn = self.connect_ldap_server()
         
         if(ldap_conn):
+            print("success connection")
             try:
                 results = ldap_conn.search(search_base,
                                        "(&(objectClass=person)(sAMAccountName=" + str(self.userName) + "))",
