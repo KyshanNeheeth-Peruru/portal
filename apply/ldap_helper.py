@@ -107,9 +107,10 @@ class LDAPHelper:
             if isUserAdded:
                 ldap_conn.unbind()
             else:
-                helper.send_email(self.userName,
-                                  LDAPActionNames.ADD_USER_TO_COURSE,
-                                  LDAPEmailBody.ADD_USER_TO_COURSE)
+                # helper.send_email(self.userName,
+                #                   LDAPActionNames.ADD_USER_TO_COURSE,
+                #                   LDAPEmailBody.ADD_USER_TO_COURSE)
+                print(self.user_dn)
                 logger.debug(f"User:{self.userName} is not added to {course}")
         except Exception as ex:
             helper.send_email(self.userName,
