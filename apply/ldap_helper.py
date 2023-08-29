@@ -20,7 +20,7 @@ class LDAPHelper:
         self.password = env("LDAP_PASSWORD")
         self.userName = kwargs.get("userName")
         self.fullName = self.get_ldap_users()
-        self.user_dn = self.get_ldap_users_dn
+        self.user_dn = self.get_ldap_users_dn()
 
     def connect_ldap_server(self):
         try:
