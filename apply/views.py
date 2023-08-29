@@ -321,6 +321,7 @@ def selected_courses(request):
                 print(prof_unix_name )
                 print(graderGroup )
                 print(uid )
+                print(ldapCourseSection)
             else:
                 messages.error(request, f"You already have the course {course.course_number} :  {course.course_name}  for the current semester.")
         
