@@ -165,14 +165,12 @@ class LDAPHelper:
                 results = ldap_conn.search(search_base,
                                        "(&(objectClass=person)(sAMAccountName=" + str(self.userName) + "))",
                                        attributes=['cn'])
-                print("results:")
                 entries_list = results[2]
                 entry_dict = entries_list[0]
-                cn_value = entry_dict['attributes']['cn']   
-                print("cn value:", cn_value)
+                cn_value = entry_dict['attributes']['cn']
                 
                 if results:
-                    return ldap_conn.entries[0].cn[0]
+                    return cn_value
                 else:
                     raise Exception
             except Exception as e:
