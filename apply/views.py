@@ -167,8 +167,8 @@ def register_view(request):
             user.last_name = lastname
             user.save()
             deactivate_user(user)
-            # create_ldap_user(request)
-            # send_activation_email(request, user)
+            create_ldap_user(request)
+            send_activation_email(request, user)
             return render(request, "../templates/home.html", {"activated": False})
             # return render(request, "../templates/registration/register.html")      
     return render(request, "../templates/registration/register.html")
@@ -291,9 +291,13 @@ def logout_view(request):
 @login_required
 def selected_courses(request):
     current_semester = Semesters.objects.filter(is_active=True).first()
+    cur_sem_abbrev= current_semester.semester_abbrev
     if request.method == "POST":
         selected_course_ids = request.POST.getlist('id')
         user = request.user
+        userName = reqest.username #ldap
+        obj = LDAPHelper(**{"userName": userName}) #ldap
+        remote_connection = RemoteConnect() #ldap
         
         for course_id in selected_course_ids:
             course = Courses.objects.get(id=course_id)
@@ -301,6 +305,16 @@ def selected_courses(request):
             
             if not user_course_exists:
                 user_course = UserCourses.objects.create(user=user, course=course, semester_year=current_semester.semester_longname, enrolled=True)
+                selectedCourse = course.course_number
+                selectedCourseSection = course.course_section
+                prof_unix_name= course.course_instructor
+                ldapCourseSection = f"{selectedCourse}-{selectedCourseSection}" #ldap
+                graderGroup = f"{selectedCourse}-{selectedCourseSection}G" #ldap
+                uid = obj.get_uid_number() #ldap
+                obj.add_user_to_courses(ldapCourseSection) #ldap
+                remote_connection.execute_command(f"sudo python3 /srv/course_directory.py -user {userName} "
+                                              f"-course {selectedCourse} -sem {cur_sem_abbrev} "
+                                              f"-prof {prof_unix_name} -uid {uid} -graderGroup {graderGroup}")
             else:
                 messages.error(request, f"You already have the course {course.course_number} :  {course.course_name}  for the current semester.")
         
