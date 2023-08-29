@@ -94,8 +94,9 @@ class LDAPHelper:
     #                       LDAPEmailBody.ERROR_UNLOCK_ACCOUNT, str(ex))
     #         logger.error(ex)
 
-    def add_user_to_courses(self, course):
+    def add_user_to_courses(self, course, fullname_user):
         # Bind connection to LDAP server
+        dn_user = f"cn={fullname_user},ou=People,dc=winpcs,dc=cs,dc=umb,dc=edu"
         ldap_conn = self.connect_ldap_server()
 
         # group_dn = f"cn={course},ou=Groups,dc=cs,dc=local"
@@ -103,7 +104,7 @@ class LDAPHelper:
 
         try:
             print("names:")
-            print(self.user_dn)
+            print(dn_user)
             print(group_dn)
             # isUserAdded = ldap_conn.extend.microsoft.add_members_to_groups(
             #     self.user_dn, group_dn
