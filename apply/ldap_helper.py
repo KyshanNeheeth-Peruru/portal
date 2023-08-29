@@ -166,7 +166,11 @@ class LDAPHelper:
                                        "(&(objectClass=person)(sAMAccountName=" + str(self.userName) + "))",
                                        attributes=['cn'])
                 print("results:")
-                print("cn value:", results[2]['attributes']['cn'])
+                entries_list = results[2]
+                entry_dict = entries_list[0]
+                cn_value = entry_dict['attributes']['cn']   
+                print("cn value:", cn_value)
+                
                 if results:
                     return ldap_conn.entries[0].cn[0]
                 else:
