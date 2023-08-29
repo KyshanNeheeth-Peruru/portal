@@ -320,6 +320,7 @@ def selected_courses(request):
                 print(cur_sem_abbrev )
                 print(prof_unix_name )
                 print(graderGroup )
+                print(uid )
             else:
                 messages.error(request, f"You already have the course {course.course_number} :  {course.course_name}  for the current semester.")
         
