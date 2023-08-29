@@ -297,7 +297,7 @@ def selected_courses(request):
         user = request.user
         userName = request.user.username #ldap
         obj = LDAPHelper(**{"userName": userName}) #ldap
-        # remote_connection = RemoteConnect() #ldap
+        remote_connection = RemoteConnect() #ldap
         
         for course_id in selected_course_ids:
             course = Courses.objects.get(id=course_id)
