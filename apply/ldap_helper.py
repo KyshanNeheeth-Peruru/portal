@@ -206,9 +206,9 @@ class LDAPHelper:
             entries_list = results[2]
             entry_dict = entries_list[0]
             uid_num = entry_dict['attributes']['uidNumber']
-            print(uid_num)
+            # print(uid_num)
             if results:
-                return ldap_conn.entries[0].uidNumber[0]
+                return uid_num
             else:
                 raise Exception
         except Exception as e:
