@@ -161,7 +161,7 @@ class LDAPHelper:
                                        "(&(objectClass=person)(sAMAccountName=" + str(self.userName) + "))",
                                        attributes=['cn'])
             if results:
-                return ldap_conn.entries[0].cn[0]
+                return self.userName
             else:
                 raise Exception
         except Exception as e:
