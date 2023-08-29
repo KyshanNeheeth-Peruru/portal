@@ -165,6 +165,8 @@ class LDAPHelper:
                 results = ldap_conn.search(search_base,
                                        "(&(objectClass=person)(sAMAccountName=" + str(self.userName) + "))",
                                        attributes=['cn'])
+                print("results:")
+                print(results)
                 if results:
                     return ldap_conn.entries[0].cn[0]
                 else:
