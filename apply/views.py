@@ -12,7 +12,7 @@ from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth import login, logout, get_user_model, authenticate, update_session_auth_hash
 from apply.constants import ActionNames
 from apply.forms import RegistrationForm, AdminView
-from apply.helper import insert_courses_into_user_courses, semester_year, change_ldap_password
+from apply.helper import insert_courses_into_user_courses, semester_year, change_ldap_password, sem_name
 from apply.models import Courses, UserCourses, Semesters, Faq
 from apply.utils import token_generator
 from apply.ldap_helper import LDAPHelper
@@ -292,6 +292,7 @@ def logout_view(request):
 def selected_courses(request):
     current_semester = Semesters.objects.filter(is_active=True).first()
     cur_sem_abbrev= current_semester.semester_abbrev
+    semester_name=sem_name(cur_sem_abbrev)
     if request.method == "POST":
         selected_course_ids = request.POST.getlist('id')
         user = request.user
@@ -311,13 +312,13 @@ def selected_courses(request):
                 ldapCourseSection = f"{selectedCourse}-{selectedCourseSection}" #ldap
                 graderGroup = f"{selectedCourse}-{selectedCourseSection}G" #ldap
                 uid = obj.get_uid_number() #ldap
-                # print("uid:")
-                # print(uid)
+                # print("sem name:")
+                # print(semester_name)
                 obj.add_user_to_courses(ldapCourseSection) #ldap
                 
                 
                 remote_connection.execute_command(f"sudo python3 /srv/course_directory.py -user {userName} "
-                                              f"-course {selectedCourse} -sem {cur_sem_abbrev} "
+                                              f"-course {selectedCourse} -sem {semester_name} "
                                               f"-prof {prof_unix_name} -uid {uid} -graderGroup {graderGroup}")
             else:
                 messages.error(request, f"You already have the course {course.course_number} :  {course.course_name}  for the current semester.")

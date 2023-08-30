@@ -20,6 +20,18 @@ def semester_year():
         semester = "Summer"
     return f"{semester} {year}"
 
+def sem_name(abrevation):
+    semname = abrevation[:2]
+    year = abrevation[-2:]
+    if semname == "SU":
+        return f"sum{year}"
+    elif semname == "SP":
+        return f"s{year}"
+    elif semname == "FA":
+        return f"f{year}"
+    else:
+        return abrevation
+
 
 def create_ldap_user(request):
     user = {
