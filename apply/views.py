@@ -89,7 +89,7 @@ def register_link(request):
         
         token = secrets.token_urlsafe(32)
         RegistrationProfile.objects.create(email=email, token=token)
-        send_verification_email(email, token)
+        send_verification_email(request, email, token)
         
         messages.success(request, "Registration link sent to email.")
         return render(request, "../templates/registration/register_link.html")
