@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirectget_current_site
+from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
