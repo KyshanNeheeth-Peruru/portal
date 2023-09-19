@@ -1,5 +1,6 @@
 class ActionNames:
     EmailSubject = "CS Portal Account Activation Link."
+    RegisterLink = "CS Portal Account Register Link."
 
 
 class LDAPActionNames:

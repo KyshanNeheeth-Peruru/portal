@@ -73,3 +73,9 @@ class Faq(models.Model):
     
     def __str__(self):
         return self.question
+    
+class RegistrationProfile(models.Model):
+    email = models.EmailField(unique=True)
+    token = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_verified = models.BooleanField(default=False)

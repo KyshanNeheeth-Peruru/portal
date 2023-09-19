@@ -13,7 +13,7 @@ from django.contrib.auth import login, logout, get_user_model, authenticate, upd
 from apply.constants import ActionNames
 from apply.forms import RegistrationForm, AdminView
 from apply.helper import insert_courses_into_user_courses, semester_year, change_ldap_password, sem_name
-from apply.models import Courses, UserCourses, Semesters, Faq
+from apply.models import Courses, UserCourses, Semesters, Faq, RegistrationProfile
 from apply.utils import token_generator
 from apply.ldap_helper import LDAPHelper
 from apply.remote_connect import RemoteConnect
@@ -24,6 +24,7 @@ import environ
 import re
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+import secrets
 import logging
 
 
@@ -77,6 +78,42 @@ def send_activation_email(request, user):
     email.send()
     logger.debug(f"Verification Email has been sent to {user_email}")
     
+# if not email.endswith("@umb.edu"):
+        #     messages.error(request, "Email must be from @umb.edu domain")
+        #     return render(request, "../templates/registration/register_link.html")
+        # else:
+            
+def register_link(request):
+    if request.method == "POST":
+        email= request.POST['email']
+        
+        token = secrets.token_urlsafe(32)
+        RegistrationProfile.objects.create(email=email, token=token)
+        send_verification_email(email, token)
+        
+        messages.success(request, "Registration link sent to email.")
+        return render(request, "../templates/registration/register_link.html")
+    return render(request, "../templates/registration/register_link.html")
+
+def send_verification_email(request, email, token):
+    domain = get_current_site(request).domain
+    uidb64 = urlsafe_base64_encode(force_bytes(email))
+    token_generator = default_token_generator
+    link = reverse("create", kwargs={"uidb64": uidb64, "token": token_generator.make_token(None)})
+    activity_url = f"http://{domain}{link}"
+
+    email_subject = ActionNames.RegisterLink
+    email_body = f"Hi, please use this link to register :\n{activity_url}"
+
+    email_msg = EmailMessage(
+        subject=email_subject,
+        body=email_body,
+        from_email="noreply@cs.umb.edu",
+        to=[email],
+    )
+    email_msg.send()
+    logger.debug(f"Registraion link has been sent to {email}")
+    
 def send_password_reset_email(user):
     token = default_token_generator.make_token(user)
     uid = urlsafe_base64_encode(force_bytes(user.pk))
@@ -121,8 +158,6 @@ def forgot_password(request):
             return render(request, '../templates/registration/password_reset_form.html')
         
     return render(request, "../templates/registration/password_reset_form.html")
-            
-
 
 def register_view(request):
     if request.method == "POST":
