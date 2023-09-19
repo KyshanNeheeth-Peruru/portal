@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirectget_current_site
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
@@ -98,8 +98,9 @@ def register_link(request):
 def send_verification_email(request, email, token):
     domain = get_current_site(request).domain
     uidb64 = urlsafe_base64_encode(force_bytes(email))
+    dummy_user = type('User', (), {'pk': None, 'username': 'dummy'})
     token_generator = default_token_generator
-    link = reverse("create", kwargs={"uidb64": uidb64, "token": token_generator.make_token(None)})
+    link = reverse("create", kwargs={"uidb64": uidb64, "token": token_generator.make_token(dummy_user)})
     activity_url = f"http://{domain}{link}"
 
     email_subject = ActionNames.RegisterLink
