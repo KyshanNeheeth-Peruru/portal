@@ -168,6 +168,16 @@ def register_view(request):
         email= request.POST['email']
         pasw1= request.POST['pasw1']
         pasw2= request.POST['pasw2']
+        
+        users_with_same_name = User.objects.filter(first_name=firstname, last_name=lastname)
+        if users_with_same_name.exists():
+            email_parts = email.split('@')
+            name_part = email_parts[0]
+            name_parts = name_part.split('.')
+            first_name = name_parts[0]
+            last_name = name_parts[1]
+            if last_name[-3:].isdigit():
+                last_name = last_name[:-3]
         if not email.endswith("@umb.edu"):
             messages.error(request, "Email must be from @umb.edu domain")
             return render(request, "../templates/registration/register.html")
