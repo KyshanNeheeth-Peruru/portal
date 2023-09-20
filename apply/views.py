@@ -177,10 +177,15 @@ def register_view(request):
             first_name = name_parts[0]
             last_name = name_parts[1]
             if last_name[-3:].isdigit():
-                last_name = last_name[:-3]
-        # if not email.endswith("@umb.edu"):
-        #     messages.error(request, "Email must be from @umb.edu domain")
-        #     return render(request, "../templates/registration/register.html")
+                last_name_nonum = last_name[:-3]
+                users_no_num_lastname = User.objects.filter(first_name=firstname, last_name=last_name_nonum)
+                if users_no_num_lastname.exists():
+                    last_name=name_parts[1]
+                else:
+                    last_name=last_name_nonum
+        if not email.endswith("@umb.edu"):
+            messages.error(request, "Email must be from @umb.edu domain")
+            return render(request, "../templates/registration/register.html")
         if(pasw1!=pasw2):
             messages.error(request,"Passwords dont match")
             return render(request, "../templates/registration/register.html")
