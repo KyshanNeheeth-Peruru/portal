@@ -178,9 +178,9 @@ def register_view(request):
             last_name = name_parts[1]
             if last_name[-3:].isdigit():
                 last_name = last_name[:-3]
-        if not email.endswith("@umb.edu"):
-            messages.error(request, "Email must be from @umb.edu domain")
-            return render(request, "../templates/registration/register.html")
+        # if not email.endswith("@umb.edu"):
+        #     messages.error(request, "Email must be from @umb.edu domain")
+        #     return render(request, "../templates/registration/register.html")
         if(pasw1!=pasw2):
             messages.error(request,"Passwords dont match")
             return render(request, "../templates/registration/register.html")
