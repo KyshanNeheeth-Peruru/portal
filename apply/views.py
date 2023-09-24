@@ -223,7 +223,24 @@ def register_view(request):
             # return render(request, "../templates/registration/register.html")      
     return render(request, "../templates/registration/register.html")
 
-
+def activate(request, uidb64, token):
+    User = get_user_model()
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except:
+        user=None
+        
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, "Account activated")
+        return redirect('login')
+    else:
+        messages.error(request, "Activation invalid !")
+        return redirect('login')
+        
+    return redirect('login')
 
 def verification_view(request, uidb64, token):
     try:
