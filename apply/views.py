@@ -182,9 +182,9 @@ def register_view(request):
                     last_name=name_parts[1]
                 else:
                     last_name=last_name_nonum
-        if not email.endswith("@umb.edu"):
-            messages.error(request, "Email must be from @umb.edu domain")
-            return render(request, "../templates/registration/register.html")
+        # if not email.endswith("@umb.edu"):
+        #     messages.error(request, "Email must be from @umb.edu domain")
+        #     return render(request, "../templates/registration/register.html")
         if(pasw1!=pasw2):
             messages.error(request,"Passwords dont match")
             return render(request, "../templates/registration/register.html")
@@ -217,7 +217,7 @@ def register_view(request):
             user.last_name = lastname
             user.save()
             deactivate_user(user)
-            create_ldap_user(request)
+            # create_ldap_user(request)
             send_activation_email(request, user)
             return render(request, "../templates/home.html", {"activated": False})
             # return render(request, "../templates/registration/register.html")      
