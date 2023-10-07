@@ -12,7 +12,7 @@ from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth import login, logout, get_user_model, authenticate, update_session_auth_hash
 from apply.constants import ActionNames
 from apply.forms import RegistrationForm, AdminView
-from apply.helper import insert_courses_into_user_courses, semester_year, change_ldap_password, sem_name
+from apply.helper import insert_courses_into_user_courses, semester_year, change_ldap_password, sem_name, get_client_ip
 from apply.models import Courses, UserCourses, Semesters, Faq, RegistrationProfile
 from apply.utils import token_generator
 from apply.ldap_helper import LDAPHelper
@@ -37,7 +37,22 @@ environ.Env.read_env()
 
 #logger = logging.getLogger(__name__)
 
-
+@login_required
+def ip_address(request):
+    ip = get_client_ip(request)
+    if request.method == 'POST':
+        try:
+            cmd = ['ssh', '-o', 'StrictHostKeyChecking=no', '-i', '/tmp/id_ed25519', 'root@pe15.cs.umb.edu',
+                   'bash -c "/usr/bin/fail2ban-client unban {0}"'.format(ip)]
+            res = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout, stderr = res.communicate()
+            if res.returncode == 0:
+                logger.info(f"User: {request.user.username} Unbanned themselves. :: IP {ip}")
+            else:
+                logger.info(f"User: {request.user.username} IP is not banned. :: IP: {ip}")
+        except Exception as e:
+            logger.error(f"Error in IP_address: {e}")
+    return render(request, '../templates/ip_address.html', {"ip": ip})
 
 def deactivate_user(user):
     user.is_active = False

@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.views.generic.base import TemplateView
+from django.urls import re_path
 
 from apply import views as apply_views
 
@@ -44,4 +45,6 @@ urlpatterns = [
     path("printQuota/", apply_views.printQuota, name='printQuota'),
     path("lablist/", apply_views.lablist, name='lablist'),
     path("admin_view/", apply_views.admin_view, name='admin_view'),
+    # path("ip", apply_views.ip_address, name='ip_address'),
+    re_path(r'^ip/$', apply_views.ip_address, name='ip_address'),
 ]
