@@ -232,7 +232,7 @@ def register_view(request):
             user.last_name = lastname
             user.save()
             deactivate_user(user)
-            # create_ldap_user(request)
+            create_ldap_user(request)
             send_activation_email(request, user)
             return render(request, "../templates/home.html", {"activated": False})
             # return render(request, "../templates/registration/register.html")      
