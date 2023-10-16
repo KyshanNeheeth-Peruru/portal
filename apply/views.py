@@ -295,6 +295,12 @@ def activate_user(user):
     # obj.unlock_ldap_account()
 
 def forgot_pasw_view(request, uidb64,token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = get_user_model().objects.get(pk=uid)
+    except:
+        user=None
+    
     return render(request, "../templates/registration/password_recover.html")
 
 def login_view(request):
