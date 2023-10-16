@@ -32,7 +32,7 @@ urlpatterns = [
     path("register/", apply_views.register_view),
     path('create/<uidb64>/<token>/', apply_views.register_view, name='register_view'),
     path('forgot_password/', apply_views.forgot_password, name='forgotpasw'),
-    path('reset/<uidb64>/<token>/', apply_views.change_password, name='password_reset_confirm'),
+    path('reset/<uidb64>/<token>/', apply_views.faq, name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('logout/', apply_views.logout_view, name='logout'),
     path("activate/<uidb64>/<token>", apply_views.activate, name="activate"),
@@ -45,6 +45,6 @@ urlpatterns = [
     path("printQuota/", apply_views.printQuota, name='printQuota'),
     path("lablist/", apply_views.lablist, name='lablist'),
     path("admin_view/", apply_views.admin_view, name='admin_view'),
-    # path("ip", apply_views.ip_address, name='ip_address'),
+    path("ip_address/", apply_views.ip_address, name='ip_address'),
     re_path(r'^ip/$', apply_views.ip_address, name='ip_address'),
 ]
