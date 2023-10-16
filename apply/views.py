@@ -301,7 +301,7 @@ def forgot_pasw_view(request, uidb64,token):
     except:
         user=None
     
-    return render(request, "../templates/registration/password_recover.html")
+    return render(request, "../templates/registration/change_password.html")
 
 def login_view(request):
     if request.method == "POST":
