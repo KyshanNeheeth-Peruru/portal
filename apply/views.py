@@ -295,7 +295,7 @@ def activate_user(user):
     # obj.unlock_ldap_account()
 
 def forgot_pasw_view(request, uidb64,token):
-    return render(request, "../templates/registration/register.html")
+    return render(request, "../templates/registration/password_recover.html")
 
 def login_view(request):
     if request.method == "POST":
