@@ -141,20 +141,20 @@ def send_password_reset_email(user):
     recipient_list = [user.email]
     send_mail(subject, message, from_email, recipient_list)
     
-# def forgot_password(request):
-#     if request.method == 'POST':
-#         email = request.POST.get('email')
-        
-#         if email:
-#             try:
-#                 user=User.objects.get(email=email)
-#                 send_password_reset_email(user)
-#                 messages.success(request,"Password recovery link sent to the email address.")
-#             except User.DoesNotExist:
-#                 messages.error(request, 'No user found with this email address.')
-#         else:
-#             messages.error(request, 'Please provide a valid email address.')
-#     return render(request, '../templates/registration/password_reset_form.html')
+def recover_password(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = get_user_model().objects.get(pk=uid)
+    except:
+        user=None
+    if user is not None:
+        messages.success(request, "User password recovered")
+        return redirect('login')
+    else:
+        messages.error(request, "User not valid !")
+        return redirect('login')
+    
+    return render(request, "../templates/registration/password_recover.html")
 
 def forgot_password(request):
     if request.method == 'POST':
