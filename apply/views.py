@@ -141,35 +141,35 @@ def send_password_reset_email(user):
     recipient_list = [user.email]
     send_mail(subject, message, from_email, recipient_list)
     
-def recover_password(request, uidb64, token):
-    try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
-        user = get_user_model().objects.get(pk=uid)
+# def recover_password(request, uidb64, token):
+#     try:
+#         uid = force_text(urlsafe_base64_decode(uidb64))
+#         user = get_user_model().objects.get(pk=uid)
         
-        if default_token_generator.check_token(user, token):
-            # Here, you should render a form for the user to set a new password
-            # After setting the new password, you can log the user in and redirect to a success page
-            # You may also want to add validation to the password setting process
+#         if default_token_generator.check_token(user, token):
+#             # Here, you should render a form for the user to set a new password
+#             # After setting the new password, you can log the user in and redirect to a success page
+#             # You may also want to add validation to the password setting process
 
-            if request.method == 'POST':
-                new_password = request.POST.get('new_password')
-                user.set_password(new_password)
-                user.save()
-                login(request, user)  # Log the user in with the new password
-                messages.success(request, "Password reset successfully.")
-                return redirect('login')  # Redirect to the login page or a success page
+#             if request.method == 'POST':
+#                 new_password = request.POST.get('new_password')
+#                 user.set_password(new_password)
+#                 user.save()
+#                 login(request, user)  # Log the user in with the new password
+#                 messages.success(request, "Password reset successfully.")
+#                 return redirect('login')  # Redirect to the login page or a success page
 
-            return render(request, 'reset_password_form.html')
-    except:
-        user=None
-    if user is not None:
-        messages.success(request, "User password recovered")
-        return redirect('login')
-    else:
-        messages.error(request, "User not valid !")
-        return redirect('login')
+#             return render(request, 'reset_password_form.html')
+#     except:
+#         user=None
+#     if user is not None:
+#         messages.success(request, "User password recovered")
+#         return redirect('login')
+#     else:
+#         messages.error(request, "User not valid !")
+#         return redirect('login')
     
-    return render(request, "../templates/registration/password_recover.html")
+#     return render(request, "../templates/registration/password_recover.html")
 
 def forgot_password(request):
     if request.method == 'POST':
