@@ -301,9 +301,45 @@ def forgot_pasw_view(request, uidb64,token):
     except:
         user=None
 
-    if user is not None:
-        login(request, user)
-    
+    if request.method == 'POST':
+        new_password1 = request.POST.get('new_password1')
+        new_password2 = request.POST.get('new_password2')
+        if new_password1 == new_password2:
+            user = request.user
+            unix_name=user.username.lower()
+            if (len(unix_name) >= 3 and unix_name in new_password1) or (unix_name in new_password1):
+                messages.error(request, 'Password may not contain username.')
+                return render(request, '../templates/registration/change_password.html')
+            
+            if (len(new_password1) <8):
+                messages.error(request, 'Password need to be more than 8 Characters.')
+                return render(request, '../templates/registration/change_password.html')
+                
+            categories = [
+                r'[A-Z\u00C0-\u02AF\u0370-\u1FFF\u2C00-\uD7FF]',  # Uppercase letters
+                r'[a-z\u00C0-\u02AF\u0370-\u1FFF\u2C00-\uD7FF]',  # Lowercase letters
+                r'\d',  # Digits
+                r'[\W_]',  # Special characters
+                r'[^\W\d_a-zA-Z\u00C0-\u02AF\u0370-\u1FFF\u2C00-\uD7FF]',  # Unicode alphabetic characters
+            ]
+            
+            categories_present = sum(bool(re.search(pattern, new_password1)) for pattern in categories)
+            
+            if categories_present < 3:
+                messages.error(request, 'Password must include characters from at least 3 categories.')
+                return render(request, '../templates/registration/change_password.html')
+            
+
+            
+            user.set_password(new_password1)
+            change_ldap_password(user, new_password1)
+            user.save()
+            update_session_auth_hash(request, user)
+            messages.success(request,'Password successfully changed.')
+            return redirect('login')
+        else:
+            messages.error(request,'Passwords dont match.')
+            return render(request, '../templates/registration/change_password.html')
     return render(request, "../templates/registration/change_password.html")
 
 def login_view(request):
