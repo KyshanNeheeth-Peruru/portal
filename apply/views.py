@@ -300,6 +300,12 @@ def forgot_pasw_view(request, uidb64,token):
         user = get_user_model().objects.get(pk=uid)
     except:
         user=None
+        
+    if request.user.is_authenticated:
+        logout(request)
+
+    if user is not None:
+        login(request, user)
     
     return render(request, "../templates/registration/change_password.html")
 
@@ -435,7 +441,7 @@ def change_password(request):
 
             
             user.set_password(new_password1)
-            #change_ldap_password(user, password1)
+            change_ldap_password(user, password1)
             user.save()
             update_session_auth_hash(request, user)
             messages.success(request,'Password successfully changed.')
