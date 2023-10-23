@@ -441,7 +441,7 @@ def change_password(request):
 
             
             user.set_password(new_password1)
-            change_ldap_password(user, password1)
+            change_ldap_password(user, new_password1)
             user.save()
             update_session_auth_hash(request, user)
             messages.success(request,'Password successfully changed.')
