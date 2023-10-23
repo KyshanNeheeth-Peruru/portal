@@ -305,7 +305,6 @@ def forgot_pasw_view(request, uidb64,token):
         new_password1 = request.POST.get('new_password1')
         new_password2 = request.POST.get('new_password2')
         if new_password1 == new_password2:
-            user = request.user
             unix_name=user.username.lower()
             if (len(unix_name) >= 3 and unix_name in new_password1) or (unix_name in new_password1):
                 messages.error(request, 'Password may not contain username.')
