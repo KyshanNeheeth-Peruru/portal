@@ -132,9 +132,7 @@ def send_verification_email(request, email, token):
 def send_password_reset_email(user):
     token = default_token_generator.make_token(user)
     uid = urlsafe_base64_encode(force_bytes(user.pk))
-    
     reset_url = f"http://yourwebsite.com/reset_password/{uid}/{token}/"
-
     subject = 'Password Reset'
     message = f'Hi {user.username}, you can reset your password by clicking the following link: {reset_url}'
     from_email = 'noreply@cs.umb.edu'
@@ -296,7 +294,9 @@ def activate_user(user):
 
 def forgot_pasw_view(request, uidb64,token):
     try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
+        # uid = force_str(urlsafe_base64_decode(uidb64))
+        # user = User.objects.get(pk=uid)
+        uid = force_str(urlsafe_base64_decode(uidb64))
         user = get_user_model().objects.get(pk=uid)
     except:
         user=None
