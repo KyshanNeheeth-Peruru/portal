@@ -510,4 +510,4 @@ def check_username(request):
     return render(request, "../templates/check_username.html")
 
 def unix2campus(request,email):
-    return "test"
+    return HttpResponse("testing", content_type="text/plain")
