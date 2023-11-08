@@ -289,9 +289,6 @@ def forgot_pasw_view(request, uidb64,token):
             if categories_present < 3:
                 messages.error(request, 'Password must include characters from at least 3 categories.')
                 return render(request, '../templates/registration/change_password.html')
-            
-
-            
             user.set_password(new_password1)
             change_ldap_password(user, new_password1)
             user.save()
@@ -498,3 +495,16 @@ def lablist(request):
 def admin_view(request):
     form = AdminView()
     return render(request, "../templates/admin_view.html", {"form": form})
+
+def check_username(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email)
+            username = user.username
+            messages.success(request, "Username found.")
+            return render(request, "../templates/check_username.html", {'username': username})
+        except User.DoesNotExist:
+            messages.error(request, "Email does not exist.")
+    
+    return render(request, "../templates/check_username.html")

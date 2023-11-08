@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Forgot Username?{% endblock %}
+
+{% block content %}
+  <h1>Check Username</h1>
+  <p style="color:red;">{{ msg }}</p>
+
+  <form method="post" style="margin-top: 20px;">
+    {% csrf_token %}
+    <div style="margin-bottom: 10px;">
+      <label for="new_password1">Umb email address:</label>
+      <input type="text" id="email" name="email" style="width: 300px;">
+    </div>
+
+    <br>
+    <button type="submit">Find username</button>
+  </form>
+  {% if username %}
+  <div style="margin-top: 20px;">
+    <label for="display-username">Username:</label>
+    <div id="display-username" style="width: 300px; border: 1px solid #ccc; padding: 5px;">{{ username }}</div>
+  </div>
+  {% endif %}
+  <div style="margin-top: 40px;"></div>
+
+
+
+  <div class="messages">
+    {% for message in messages %}
+      <p style="margin: 10px 0; padding: 5px; border-radius: 4px; font-size: 14px;
+                {% if message.tags == 'success' %} color: green; background-color: #e9f7ef; border: 1px solid #1c7430; {% endif %}
+                {% if message.tags == 'error' %} color: red; background-color: #f8e8e8; border: 1px solid #d32f2f; {% endif %}">
+        {{ message }}
+      </p>
+    {% endfor %}
+  </div>
+  
+  
+{% endblock %}

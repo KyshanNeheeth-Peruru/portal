@@ -47,4 +47,6 @@ urlpatterns = [
     path("admin_view/", apply_views.admin_view, name='admin_view'),
     path("ip_address/", apply_views.ip_address, name='ip_address'),
     re_path(r'^ip/$', apply_views.ip_address, name='ip_address'),
+    path("check_username/", apply_views.check_username, name='check_username'),
+    
 ]
