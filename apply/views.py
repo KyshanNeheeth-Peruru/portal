@@ -509,9 +509,8 @@ def check_username(request):
     
     return render(request, "../templates/check_username.html")
 
-def unix2campus(request):
+def unix2campus(request,email):
     if request.method == 'POST':
-        email = request.POST.get('email')
         user = User.objects.get(email=email)
         username = user.username
         return username
