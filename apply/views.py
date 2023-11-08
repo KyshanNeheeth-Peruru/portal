@@ -514,4 +514,4 @@ def unix2campus(request):
         email = request.POST.get('email')
         user = User.objects.get(email=email)
         username = user.username
-    return username
+        return username
