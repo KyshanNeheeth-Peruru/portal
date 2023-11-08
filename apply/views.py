@@ -27,15 +27,12 @@ from django.core.mail import send_mail
 import secrets
 import logging
 
-
-logger = logging.getLogger(__name__)
-
 env = environ.Env()
 environ.Env.read_env()
 
 # Create your views here.
 
-#logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 @login_required
 def ip_address(request):
@@ -92,23 +89,18 @@ def send_activation_email(request, user):
     )
     email.send()
     logger.debug(f"Verification Email has been sent to {user_email}")
-    
-# if not email.endswith("@umb.edu"):
-        #     messages.error(request, "Email must be from @umb.edu domain")
-        #     return render(request, "../templates/registration/register_link.html")
-        # else:
             
-def register_link(request):
-    if request.method == "POST":
-        email= request.POST['email']
+# def register_link(request):
+#     if request.method == "POST":
+#         email= request.POST['email']
         
-        token = secrets.token_urlsafe(32)
-        RegistrationProfile.objects.create(email=email, token=token)
-        send_verification_email(request, email, token)
+#         token = secrets.token_urlsafe(32)
+#         RegistrationProfile.objects.create(email=email, token=token)
+#         send_verification_email(request, email, token)
         
-        messages.success(request, "Registration link sent to email.")
-        return render(request, "../templates/registration/register_link.html")
-    return render(request, "../templates/registration/register_link.html")
+#         messages.success(request, "Registration link sent to email.")
+#         return render(request, "../templates/registration/register_link.html")
+#     return render(request, "../templates/registration/register_link.html")
 
 def send_verification_email(request, email, token):
     domain = get_current_site(request).domain
@@ -138,36 +130,6 @@ def send_password_reset_email(user):
     from_email = 'noreply@cs.umb.edu'
     recipient_list = [user.email]
     send_mail(subject, message, from_email, recipient_list)
-    
-# def recover_password(request, uidb64, token):
-#     try:
-#         uid = force_text(urlsafe_base64_decode(uidb64))
-#         user = get_user_model().objects.get(pk=uid)
-        
-#         if default_token_generator.check_token(user, token):
-#             # Here, you should render a form for the user to set a new password
-#             # After setting the new password, you can log the user in and redirect to a success page
-#             # You may also want to add validation to the password setting process
-
-#             if request.method == 'POST':
-#                 new_password = request.POST.get('new_password')
-#                 user.set_password(new_password)
-#                 user.save()
-#                 login(request, user)  # Log the user in with the new password
-#                 messages.success(request, "Password reset successfully.")
-#                 return redirect('login')  # Redirect to the login page or a success page
-
-#             return render(request, 'reset_password_form.html')
-#     except:
-#         user=None
-#     if user is not None:
-#         messages.success(request, "User password recovered")
-#         return redirect('login')
-#     else:
-#         messages.error(request, "User not valid !")
-#         return redirect('login')
-    
-#     return render(request, "../templates/registration/password_recover.html")
 
 def forgot_password(request):
     if request.method == 'POST':
@@ -210,9 +172,9 @@ def register_view(request):
                     last_name=name_parts[1]
                 else:
                     last_name=last_name_nonum
-        # if not email.endswith("@umb.edu"):
-        #     messages.error(request, "Email must be from @umb.edu domain")
-        #     return render(request, "../templates/registration/register.html")
+        if not email.endswith("@umb.edu"):
+            messages.error(request, "Email must be from @umb.edu domain")
+            return render(request, "../templates/registration/register.html")
         if(pasw1!=pasw2):
             messages.error(request,"Passwords dont match")
             return render(request, "../templates/registration/register.html")
