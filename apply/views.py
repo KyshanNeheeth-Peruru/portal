@@ -508,3 +508,10 @@ def check_username(request):
             messages.error(request, "Email does not exist.")
     
     return render(request, "../templates/check_username.html")
+
+def unix2campus(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        user = User.objects.get(email=email)
+        username = user.username
+    return username
