@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.urls import reverse
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -522,12 +522,12 @@ def unix2campus(request):
                 try:
                     user = User.objects.get(username=username)
                     email = user.email
-                    return JsonResponse({'email': email})
+                    return HttpResponse(email, content_type="text/plain")
                 except User.DoesNotExist:
-                    return JsonResponse({'message': 'User does not exist'}, status=404)
+                    return HttpResponse('User not found', status=404, content_type="text/plain")
             else:
-                return JsonResponse({'message': 'Username is required'}, status=400)
+                return HttpResponse('Username is required', status=400, content_type="text/plain")
         except json.JSONDecodeError:
-            return JsonResponse({'message': 'Invalid JSON format'}, status=400)
+            return HttpResponse('Invalid JSON format', status=400, content_type="text/plain")
 
-    return JsonResponse({'message': 'Invalid request method'}, status=400)
+    return HttpResponse('Invalid request method', status=400, content_type="text/plain")
