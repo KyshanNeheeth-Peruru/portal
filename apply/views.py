@@ -498,31 +498,31 @@ def admin_view(request):
     form = AdminView()
     return render(request, "../templates/admin_view.html", {"form": form})
 
-# def check_username(request):
-#     if request.method == 'POST':
-#         email = request.POST.get('email')
-#         try:
-#             user = User.objects.get(email=email)
-#             username = user.username
-#             messages.success(request, "Username found.")
-#             return render(request, "../templates/check_username.html", {'username': username})
-#         except User.DoesNotExist:
-#             messages.error(request, "Email does not exist.")
+def check_username(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email)
+            username = user.username
+            messages.success(request, "Username found.")
+            return render(request, "../templates/check_username.html", {'username': username})
+        except User.DoesNotExist:
+            messages.error(request, "Email does not exist.")
     
-#     return render(request, "../templates/check_username.html")
+    return render(request, "../templates/check_username.html")
 
 @csrf_exempt
-def check_username(request):
+def unix2campus(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body.decode('utf-8'))
-            email = data.get('email')
+            username = data.get('username')
 
             if email:
                 try:
-                    user = User.objects.get(email=email)
-                    username = user.username
-                    return JsonResponse({'username': username})
+                    user = User.objects.get(username=username)
+                    email = user.email
+                    return JsonResponse({'email': email})
                 except User.DoesNotExist:
                     return JsonResponse({'message': 'Email does not exist'}, status=404)
             else:
@@ -531,7 +531,3 @@ def check_username(request):
             return JsonResponse({'message': 'Invalid JSON format'}, status=400)
 
     return JsonResponse({'message': 'Invalid request method'}, status=400)
-
-
-def unix2campus(request,email):
-    return HttpResponse("testing", content_type="text/plain")
