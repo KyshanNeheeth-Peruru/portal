@@ -524,10 +524,10 @@ def unix2campus(request):
                     email = user.email
                     return HttpResponse(email, content_type="text/plain")
                 except User.DoesNotExist:
-                    return HttpResponse('User does not exist', status=404, content_type="text/plain")
+                    return JsonResponse({'message': 'User does not exist'}, status=404)
             else:
-                return HttpResponse('Username is required', status=400, content_type="text/plain")
+                return JsonResponse({'message': 'Username is required'}, status=400)
         except json.JSONDecodeError:
-            return HttpResponse('Invalid JSON format', status=400, content_type="text/plain")
+            return JsonResponse({'message': 'Invalid JSON format'}, status=400)
 
-    return HttpResponse('Invalid request method', status=400, content_type="text/plain")
+    return JsonResponse({'message': 'Invalid request method'}, status=400)
