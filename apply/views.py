@@ -518,15 +518,15 @@ def unix2campus(request):
             data = json.loads(request.body.decode('utf-8'))
             username = data.get('username')
 
-            if email:
+            if username:
                 try:
                     user = User.objects.get(username=username)
                     email = user.email
                     return JsonResponse({'email': email})
                 except User.DoesNotExist:
-                    return JsonResponse({'message': 'Email does not exist'}, status=404)
+                    return JsonResponse({'message': 'User does not exist'}, status=404)
             else:
-                return JsonResponse({'message': 'Email is required'}, status=400)
+                return JsonResponse({'message': 'Username is required'}, status=400)
         except json.JSONDecodeError:
             return JsonResponse({'message': 'Invalid JSON format'}, status=400)
 
