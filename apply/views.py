@@ -27,6 +27,8 @@ from django.core.mail import send_mail
 import secrets
 import logging
 import json
+from django.views.decorators.csrf import csrf_exempt
+
 env = environ.Env()
 environ.Env.read_env()
 
@@ -509,6 +511,7 @@ def admin_view(request):
     
 #     return render(request, "../templates/check_username.html")
 
+@csrf_exempt
 def check_username(request):
     if request.method == 'POST':
         try:
