@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -26,7 +26,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 import secrets
 import logging
-
+import json
 env = environ.Env()
 environ.Env.read_env()
 
@@ -496,18 +496,39 @@ def admin_view(request):
     form = AdminView()
     return render(request, "../templates/admin_view.html", {"form": form})
 
+# def check_username(request):
+#     if request.method == 'POST':
+#         email = request.POST.get('email')
+#         try:
+#             user = User.objects.get(email=email)
+#             username = user.username
+#             messages.success(request, "Username found.")
+#             return render(request, "../templates/check_username.html", {'username': username})
+#         except User.DoesNotExist:
+#             messages.error(request, "Email does not exist.")
+    
+#     return render(request, "../templates/check_username.html")
+
 def check_username(request):
     if request.method == 'POST':
-        email = request.POST.get('email')
         try:
-            user = User.objects.get(email=email)
-            username = user.username
-            messages.success(request, "Username found.")
-            return render(request, "../templates/check_username.html", {'username': username})
-        except User.DoesNotExist:
-            messages.error(request, "Email does not exist.")
-    
-    return render(request, "../templates/check_username.html")
+            data = json.loads(request.body.decode('utf-8'))
+            email = data.get('email')
+
+            if email:
+                try:
+                    user = User.objects.get(email=email)
+                    username = user.username
+                    return JsonResponse({'username': username, 'message': 'Username found'})
+                except User.DoesNotExist:
+                    return JsonResponse({'message': 'Email does not exist'}, status=404)
+            else:
+                return JsonResponse({'message': 'Email is required'}, status=400)
+        except json.JSONDecodeError:
+            return JsonResponse({'message': 'Invalid JSON format'}, status=400)
+
+    return JsonResponse({'message': 'Invalid request method'}, status=400)
+
 
 def unix2campus(request,email):
     return HttpResponse("testing", content_type="text/plain")
