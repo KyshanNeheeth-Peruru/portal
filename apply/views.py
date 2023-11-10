@@ -522,7 +522,7 @@ def check_username(request):
                 try:
                     user = User.objects.get(email=email)
                     username = user.username
-                    return JsonResponse({'username': username, 'message': 'Username found'})
+                    return JsonResponse(username)
                 except User.DoesNotExist:
                     return JsonResponse({'message': 'Email does not exist'}, status=404)
             else:
