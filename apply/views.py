@@ -360,12 +360,12 @@ def selected_courses(request):
                 # print(semester_name)
                 obj.add_user_to_courses(ldapCourseSection) #ldap
                 
-                print(f"sudo python3 /srv/course_directory.py -user {userName} "
-                                              f"-course {selectedCourse} -sem {semester_name} "
-                                              f"-prof {prof_unix_name} -uid {uid} -graderGroup {graderGroup}")
-                # remote_connection.execute_command(f"sudo python3 /srv/course_directory.py -user {userName} "
+                # print(f"sudo python3 /srv/course_directory.py -user {userName} "
                 #                               f"-course {selectedCourse} -sem {semester_name} "
                 #                               f"-prof {prof_unix_name} -uid {uid} -graderGroup {graderGroup}")
+                remote_connection.execute_command(f"sudo python3 /srv/course_directory.py -user {userName} "
+                                              f"-course {selectedCourse} -sem {semester_name} "
+                                              f"-prof {prof_unix_name} -uid {uid} -graderGroup {graderGroup}")
             else:
                 messages.error(request, f"You already have the course {course.course_number} :  {course.course_name}  for the current semester.")
         
