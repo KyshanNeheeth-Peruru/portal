@@ -352,7 +352,7 @@ def selected_courses(request):
                 user_course = UserCourses.objects.create(user=user, course=course, semester_year=current_semester.semester_longname, enrolled=True)
                 selectedCourse = course.course_number
                 selectedCourseSection = course.course_section
-                prof_unix_name= course.course_instructor
+                prof_unix_name= course.prof_unix_name
                 ldapCourseSection = f"{selectedCourse}-{selectedCourseSection}" #ldap
                 graderGroup = f"{selectedCourse}-{selectedCourseSection}G" #ldap
                 uid = obj.get_uid_number() #ldap
