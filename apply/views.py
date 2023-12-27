@@ -21,13 +21,17 @@ from apply.ldap import LDAP
 from django.db.models import Q
 import paramiko
 import environ
+from django.db import IntegrityError
 import re
+import io
+import csv
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 import secrets
 import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
+from django import forms
 
 env = environ.Env()
 environ.Env.read_env()
@@ -510,6 +514,52 @@ def check_username(request):
             messages.error(request, "Email does not exist.")
     
     return render(request, "../templates/check_username.html")
+
+@login_required
+def add_data(request):
+    if request.method == 'POST':
+        form = CSVUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            csv_file = request.FILES['csv_file']
+            decoded_file = csv_file.read().decode('utf-8').splitlines()
+            reader = csv.reader(decoded_file)
+            courses = [row for row in reader if len(row) >= 5]
+            request.session['courses'] = courses
+            return render(request, 'confirm_courses.html', {'courses': courses})
+    else:
+        form = CSVUploadForm()
+    return render(request, 'add_data.html', {'form': form})
+
+
+class CSVUploadForm(forms.Form):
+    csv_file = forms.FileField()
+
+@login_required
+def confirm_add(request):
+    cur_sem = Semesters.objects.filter(is_active=True).first()
+    if request.method == 'POST':
+        courses = request.session.get('courses', [])
+        if cur_sem is not None:
+            for course in courses:
+                try:
+                    Courses.objects.create(
+                        course_number=course[0],
+                        course_section=course[3],
+                        course_name=course[2],
+                        course_instructor=course[4],
+                        prof_unix_name=course[5],
+                        course_semester=cur_sem
+                    )
+                except IntegrityError:
+                    messages.error(request, f'Duplicate entry for {course[0]} - Section : {course[3]} - {cur_sem.semester_longname}.')
+                    return redirect('add_data')
+
+            messages.success(request, 'Courses added to the database.')
+        else:
+            messages.error(request, 'Current semester is not set up properly.')
+
+        del request.session['courses']
+        return redirect('add_data')
 
 @csrf_exempt
 def unix2campus(request):

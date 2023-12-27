@@ -49,5 +49,8 @@ urlpatterns = [
     re_path(r'^ip/$', apply_views.ip_address, name='ip_address'),
     path("check_username/", apply_views.check_username, name='check_username'),
     path("unix2campus/", apply_views.unix2campus, name='unix2campus'),
+    path("add_data/", apply_views.add_data, name='add_data'),
+    path('confirm_add/', apply_views.confirm_add, name='confirm_add'),
+
     
 ]

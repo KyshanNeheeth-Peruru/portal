@@ -40,6 +40,7 @@ class Courses(models.Model):
     class Meta:
         verbose_name = "Courses"
         verbose_name_plural = "Courses"
+        unique_together = ('course_number', 'course_section', 'course_semester')
 
     def __unicode__(self):
         return "{}, {}, {}".format(
