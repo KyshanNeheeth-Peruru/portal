@@ -191,6 +191,7 @@
                     </a>
                     {% endblock %}
                 {% if user.is_authenticated %}
+                {% if user.is_superuser %}
                 {% block ip-link %}
                         <a class="nav-item nav-link border-bottom" href="/ip_address/">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -200,6 +201,7 @@
                             Unban IP Address
                         </a>
                 {% endblock %}
+                {% endif %}
                 {% endif %}
                 {% if user.is_superuser %}
 
