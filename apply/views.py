@@ -231,27 +231,45 @@ def activate(request, uidb64, token):
         last_name = user.last_name
         email = user.email
         if request.method == "POST":
-            pasw= request.POST['pasw']
-            # logout(request)
-            authenticated_user = authenticate(request, username=username, password=pasw)
-            if authenticated_user is not None:
+            pasw1= request.POST['pasw1']
+            pasw2 = request.POST['pasw2']
+            if pasw1 == pasw2:
+                user.set_password(pasw1)
                 user.is_active = True
                 user.save()
-                user = {
-                    "userName": username,
-                    "userPassword": request.POST["pasw"],
-                    "fullName": f"{first_name.capitalize()} {last_name.capitalize()}",
-                    "firstName": first_name.capitalize(),
-                    "lastName": last_name.capitalize(),
-                    "email": email,
+                ldap_user_data = {
+                    "userName": user.username,
+                    "userPassword": pasw1,  # Use the new password
+                    "fullName": f"{user.first_name.capitalize()} {user.last_name.capitalize()}",
+                    "firstName": user.first_name.capitalize(),
+                    "lastName": user.last_name.capitalize(),
+                    "email": user.email,
                 }
-                obj = LDAP(**user)
+                obj = LDAP(**ldap_user_data)
                 obj.add_new_user()
-                messages.success(request, "Account activated")
-                return redirect('login')
             else:
-                messages.error(request, "The password you entered is incorrect.")
+                messages.error(request, "The passwords dont match please go back to email and re use the link.")
                 return redirect('login')
+            # logout(request)
+            # authenticated_user = authenticate(request, username=username, password=pasw)
+            # if authenticated_user is not None:
+            #     user.is_active = True
+            #     user.save()
+            #     user = {
+            #         "userName": username,
+            #         "userPassword": request.POST["pasw"],
+            #         "fullName": f"{first_name.capitalize()} {last_name.capitalize()}",
+            #         "firstName": first_name.capitalize(),
+            #         "lastName": last_name.capitalize(),
+            #         "email": email,
+            #     }
+            #     obj = LDAP(**user)
+            #     obj.add_new_user()
+            #     messages.success(request, "Account activated")
+            #     return redirect('login')
+            # else:
+            #     messages.error(request, "The password you entered is incorrect.")
+            #     return redirect('login')
             
             return render(request, "../templates/home.html")
         return render(request, "../templates/registration/activating.html", {"username": username})
