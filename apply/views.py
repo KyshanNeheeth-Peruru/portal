@@ -233,7 +233,7 @@ def activate(request, uidb64, token):
         if request.method == "POST":
             pasw= request.POST['pasw']
             # logout(request)
-            authenticated_user = authenticate(username=username, password=pasw)
+            authenticated_user = authenticate(request, username=username, password=pasw)
             if authenticated_user is not None:
                 user.is_active = True
                 user.save()
