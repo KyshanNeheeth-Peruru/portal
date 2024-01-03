@@ -218,13 +218,7 @@ def activate(request, uidb64, token):
         user = User.objects.get(pk=uid)
     except:
         user=None
-        
-    # if user is not None:
-    #     user.is_active = True
-    #     user.save()
-    #     # create_ldap_user(request)
-    #     messages.success(request, "Account activated")
-    #     return redirect('login')
+
     if user is not None:
         username = user.username
         first_name = user.first_name
@@ -239,7 +233,7 @@ def activate(request, uidb64, token):
                 user.save()
                 ldap_user_data = {
                     "userName": user.username,
-                    "userPassword": pasw1,  # Use the new password
+                    "userPassword": pasw1,
                     "fullName": f"{user.first_name.capitalize()} {user.last_name.capitalize()}",
                     "firstName": user.first_name.capitalize(),
                     "lastName": user.last_name.capitalize(),
@@ -247,29 +241,10 @@ def activate(request, uidb64, token):
                 }
                 obj = LDAP(**ldap_user_data)
                 obj.add_new_user()
+                messages.success(request, "Account activated")
             else:
                 messages.error(request, "The passwords dont match please go back to email and re use the link.")
                 return redirect('login')
-            # logout(request)
-            # authenticated_user = authenticate(request, username=username, password=pasw)
-            # if authenticated_user is not None:
-            #     user.is_active = True
-            #     user.save()
-            #     user = {
-            #         "userName": username,
-            #         "userPassword": request.POST["pasw"],
-            #         "fullName": f"{first_name.capitalize()} {last_name.capitalize()}",
-            #         "firstName": first_name.capitalize(),
-            #         "lastName": last_name.capitalize(),
-            #         "email": email,
-            #     }
-            #     obj = LDAP(**user)
-            #     obj.add_new_user()
-            #     messages.success(request, "Account activated")
-            #     return redirect('login')
-            # else:
-            #     messages.error(request, "The password you entered is incorrect.")
-            #     return redirect('login')
             
             return render(request, "../templates/home.html")
         return render(request, "../templates/registration/activating.html", {"username": username})
