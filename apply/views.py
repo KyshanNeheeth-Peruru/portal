@@ -95,18 +95,6 @@ def send_activation_email(request, user):
     )
     email.send()
     logger.debug(f"Verification Email has been sent to {user_email}")
-            
-# def register_link(request):
-#     if request.method == "POST":
-#         email= request.POST['email']
-        
-#         token = secrets.token_urlsafe(32)
-#         RegistrationProfile.objects.create(email=email, token=token)
-#         send_verification_email(request, email, token)
-        
-#         messages.success(request, "Registration link sent to email.")
-#         return render(request, "../templates/registration/register_link.html")
-#     return render(request, "../templates/registration/register_link.html")
 
 def send_verification_email(request, email, token):
     domain = get_current_site(request).domain
@@ -188,6 +176,10 @@ def register_view(request):
             unix_name=username.lower()
             if (len(unix_name) >= 3 and unix_name in pasw1) or (unix_name in pasw2):
                 messages.error(request, 'Password may not contain username.')
+                return render(request, "../templates/registration/register.html")
+            
+            if (len(unix_name) < 3) or (len(unix_name) > 8) or (unix_name[0].isdigit()):
+                messages.error(request, 'Username must not start with a number and must be 3 to 8 characters long.')
                 return render(request, "../templates/registration/register.html")
             
             if (len(pasw1) <8):

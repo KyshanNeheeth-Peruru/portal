@@ -46,7 +46,6 @@ class LDAP:
         try:
             # Provide the hostname and port number of the openLDAP
             server = Server(self.server_uri, get_info=ALL)
-
             # username and password can be configured during openldap setup
             connection = Connection(
                 server,
