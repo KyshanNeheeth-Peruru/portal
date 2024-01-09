@@ -46,7 +46,7 @@ class LDAP:
         # Connect to LDAP server and perform search query
         ldap_conn = self.connect_ldap_server()
         search_filter = f"(samAccountName={username})"
-        ldap_conn.search(search_base, search_filter, attributes=['cn'])
+        ldap_conn.search(search_base='ou=People,dc=winpcs,dc=cs,dc=umb,dc=edu',search_filter=search_filter, attributes=['cn'])
         return len(ldap_conn.entries) > 0
 
     def connect_ldap_server(self):
