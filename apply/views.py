@@ -220,34 +220,10 @@ def activate(request, uidb64, token):
         user=None
 
     if user is not None:
-        username = user.username
-        first_name = user.first_name
-        last_name = user.last_name
-        email = user.email
-        if request.method == "POST":
-            pasw1= request.POST['pasw1']
-            pasw2 = request.POST['pasw2']
-            if pasw1 == pasw2:
-                user.set_password(pasw1)
-                user.is_active = True
-                user.save()
-                ldap_user_data = {
-                    "userName": user.username,
-                    "userPassword": pasw1,
-                    "fullName": f"{user.first_name.capitalize()} {user.last_name.capitalize()}",
-                    "firstName": user.first_name.capitalize(),
-                    "lastName": user.last_name.capitalize(),
-                    "email": user.email,
-                }
-                obj = LDAP(**ldap_user_data)
-                obj.add_new_user()
-                messages.success(request, "Account activated")
-            else:
-                messages.error(request, "The passwords dont match please go back to email and re use the link.")
-                return redirect('login')
-            
-            return render(request, "../templates/home.html")
-        return render(request, "../templates/registration/activating.html", {"username": username})
+        user.is_active = True
+        user.save()
+        messages.success(request, "Account activated")
+        return redirect('login')
     else:
         messages.error(request, "Activation invalid !")
         return redirect('login')
@@ -322,6 +298,22 @@ def forgot_pasw_view(request, uidb64,token):
             return render(request, '../templates/registration/change_password.html')
     return render(request, "../templates/registration/change_password.html")
 
+# def login_view(request):
+#     if request.method == "POST":
+#         username = request.POST['username']
+#         password = request.POST['password']
+#         user = authenticate(request, username=username, password=password)
+#         logger.info("logged in test logger")
+#         if user is not None:
+#             login(request, user)
+#             return redirect('courses_list')
+
+#         else:
+#             messages.error(request, "Username or password invalid")
+#             return redirect('login')
+
+#     return render(request, 'home.html')
+
 def login_view(request):
     if request.method == "POST":
         username = request.POST['username']
@@ -329,8 +321,13 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         logger.info("logged in test logger")
         if user is not None:
-            login(request, user)
-            return redirect('courses_list')
+            ldap_obj = LDAP()
+            if not ldap_obj.check_user_exists(username):
+                messages.success(request, "no active directory account")
+                return redirect('login')
+            else:
+                messages.success(request, "active directory exists")
+                return redirect('login')
 
         else:
             messages.error(request, "Username or password invalid")
