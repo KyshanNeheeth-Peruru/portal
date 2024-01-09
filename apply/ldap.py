@@ -45,7 +45,7 @@ class LDAP:
     def check_user_exists(self, username):
         # Connect to LDAP server and perform search query
         ldap_conn = self.connect_ldap_server()
-        search_filter = '(&(objectClass=user)(sAMAccountName=*))'
+        search_filter = f'(&(objectClass=user)(sAMAccountName={username}))'
         ldap_conn.search(search_base='ou=People,dc=winpcs,dc=cs,dc=umb,dc=edu',search_filter=search_filter, attributes=['cn'])
         return len(ldap_conn.entries) > 0
 
