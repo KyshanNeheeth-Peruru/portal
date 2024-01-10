@@ -56,14 +56,10 @@ class LDAP:
         ldap_conn = self.connect_ldap_server()
         try:
             results = ldap_conn.search(search_base,
-                                       "(&(objectClass=person)(sAMAccountName=" + str(userName) + "))",
+                                       "((sAMAccountName=" + str(username) + "))",
                                        attributes=['uidNumber'])
-            uid_num = entry_dict['attributes']['uidNumber']
 
-            if results:
-                return True
-            else:
-                return False
+            return results
         except Exception as e:
             print(e)
 
