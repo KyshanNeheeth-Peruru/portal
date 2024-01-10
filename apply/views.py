@@ -314,19 +314,40 @@ def forgot_pasw_view(request, uidb64,token):
 
 #     return render(request, 'home.html')
 
+# def login_view(request):
+#     if request.method == "POST":
+#         username = request.POST['username']
+#         password = request.POST['password']
+#         user = authenticate(request, username=username, password=password)
+#         obj = LDAPHelper(**{"userName": userName})
+#         if user is not None:
+#             ldap_obj = LDAP()
+#             if not ldap_obj.check_user_exists(username):
+#                 messages.success(request, f"no active directory account for {username}")
+#                 return redirect('login')
+#             else:
+#                 messages.success(request, "active directory exists")
+#                 return redirect('login')
+
+#         else:
+#             messages.error(request, "Username or password invalid")
+#             return redirect('login')
+
+#     return render(request, 'home.html')
+
 def login_view(request):
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
-        logger.info("logged in test logger")
         if user is not None:
-            ldap_obj = LDAP()
-            if not ldap_obj.check_user_exists(username):
-                messages.success(request, f"no active directory account for {username}")
+            obj = LDAPHelper(**{"userName": userName})
+            dom_name=obj.get_ldap_users_dn
+            if dom_name is not None:
+                messages.success(request, "active directory exists")
                 return redirect('login')
             else:
-                messages.success(request, "active directory exists")
+                messages.success(request, f"no active directory account for {username}")
                 return redirect('login')
 
         else:
