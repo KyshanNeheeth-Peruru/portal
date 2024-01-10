@@ -29,7 +29,8 @@ class LDAPHelper:
         search_filter = f"(&(objectClass=person)(sAMAccountName=Kyshan))"
         ldap_conn = self.connect_ldap_server()
         try:
-            ldap_conn.search(search_base, search_filter, attributes=['sAMAccountName'])
+            # ldap_conn.search(search_base, search_filter, attributes=['sAMAccountName'])
+            ldap_conn.search(search_base,"(&(objectClass=person)(sAMAccountName=" + str(self.userName) + "))",attributes=['distinguishedName'])
             return ldap_conn.entries
             if len(ldap_conn.entries) > 0:
                 return True
