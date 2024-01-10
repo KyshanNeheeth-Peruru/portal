@@ -341,7 +341,7 @@ def login_view(request):
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            obj = LDAPHelper(**{"userName": userName})
+            obj = LDAPHelper(**{"userName": username})
             dom_name=obj.get_ldap_users_dn
             if dom_name is not None:
                 messages.success(request, "active directory exists")
