@@ -26,11 +26,12 @@ class LDAPHelper:
         
     def check_user_exists(self):
         search_base = 'ou=People,dc=winpcs,dc=cs,dc=umb,dc=edu'
-        search_filter = f"(&(objectClass=person)(sAMAccountName=Kyshan))"
+        # search_filter = f"(&(objectClass=person)(sAMAccountName=Kyshan))"
+        search_filter = "(objectClass=person)"
         ldap_conn = self.connect_ldap_server()
         try:
             # ldap_conn.search(search_base, search_filter, attributes=['sAMAccountName'])
-            ldap_conn.search(search_base,"(&(objectClass=person)(sAMAccountName=" + str(self.userName) + "))",attributes=['distinguishedName'])
+            ldap_conn.search(search_base, search_filter, attributes=['sAMAccountName'])
             return ldap_conn.entries
             if len(ldap_conn.entries) > 0:
                 return True
