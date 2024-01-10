@@ -326,13 +326,6 @@ def login_view(request):
                 return redirect('login')
             else:
                 messages.error(request, f"no active direc for {username}")
-            # if not ldap_obj.check_user_exists(username):
-            #     messages.success(request, f"no active directory account for {username}")
-            #     return redirect('login')
-            # else:
-            #     messages.success(request, "active directory exists")
-            #     return redirect('login')
-
         else:
             messages.error(request, "Username or password invalid")
             return redirect('login')
