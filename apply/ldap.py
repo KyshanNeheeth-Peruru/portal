@@ -57,7 +57,7 @@ class LDAP:
         try:
             results = ldap_conn.search(search_base,
                                        "((sAMAccountName=" + str(username) + "))",
-                                       attributes=['uidNumber'])
+                                       attributes=['userName'])
 
             return results
         except Exception as e:
