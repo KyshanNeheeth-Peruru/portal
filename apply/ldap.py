@@ -57,7 +57,7 @@ class LDAP:
 
         try:
             # Construct the search filter using the provided username
-            search_filter = "(&(objectClass=person)(sAMAccountName=" + str(username) + "))"
+            search_filter = f"(&(objectClass=person)(uid={username}))"
         
             # Perform the LDAP search
             results = ldap_conn.search(search_base, search_filter, attributes=['cn'])
