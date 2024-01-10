@@ -344,7 +344,7 @@ def login_view(request):
             obj = LDAPHelper(**{"userName": username})
             dom_name=obj.get_ldap_users_dn
             if dom_name is not None:
-                messages.success(request, "active directory exists")
+                messages.success(request, f"active directory exists for dom- {dom_name}")
                 return redirect('login')
             else:
                 messages.success(request, f"no active directory account for {username}")
