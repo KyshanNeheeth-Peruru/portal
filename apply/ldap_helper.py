@@ -30,13 +30,14 @@ class LDAPHelper:
         try:
             ldap_conn.search(search_base,"(&(objectClass=person)(sAMAccountName=" + str(username) + "))",attributes=['sAMAccountName'])
 
-            if len(connection.entries) > 0:
+            if len(ldap_conn.entries) > 0:
                 return True
             else:
                 return False
  
         except Exception as e:
             print(e)
+            return
         finally:
             ldap_conn.unbind()
 
