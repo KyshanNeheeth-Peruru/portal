@@ -30,7 +30,7 @@ class LDAPHelper:
         ldap_conn = self.connect_ldap_server()
         try:
             ldap_conn.search(search_base, search_filter, attributes=['sAMAccountName'])
-            return self.userName
+            return ldap_conn.entries
             if len(ldap_conn.entries) > 0:
                 return True
             else:
