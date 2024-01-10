@@ -205,7 +205,7 @@ def register_view(request):
             user.last_name = lastname
             user.save()
             deactivate_user(user)
-            # create_ldap_user(request)
+            create_ldap_user(request)
             send_activation_email(request, user)
             return render(request, "../templates/home.html", {"activated": False})
             # return render(request, "../templates/registration/register.html")      
@@ -222,6 +222,7 @@ def activate(request, uidb64, token):
     if user is not None:
         user.is_active = True
         user.save()
+        activate_user(user)
         messages.success(request, "Account activated")
         return redirect('login')
     else:
@@ -230,27 +231,11 @@ def activate(request, uidb64, token):
         
     return redirect('login')
 
-def verification_view(request, uidb64, token):
-    try:
-        user = User.objects.get(username=login_name)
-        # activate_user(user)
-        user.is_active = True
-        user.save()
-        # obj = LDAPHelper(**{"userName": user})
-        # obj = LDAPHelper(userName=user.username)
-        # obj.unlock_ldap_account()
-        messages.success(request, "Verification link has been generated")
-    except Exception as ex:
-        messages.error(request, f"Error during verification: {ex}")
-    
-    return render(request, "../templates/home.html", {"activated": True})
-
-
 def activate_user(user):
     user.is_active = True
     user.save()
-    # obj = LDAPHelper(**{"userName": user})
-    # obj.unlock_ldap_account()
+    obj = LDAPHelper(**{"userName": user})
+    obj.unlock_ldap_account()
 
 def forgot_pasw_view(request, uidb64,token):
     try:
@@ -298,37 +283,20 @@ def forgot_pasw_view(request, uidb64,token):
             return render(request, '../templates/registration/change_password.html')
     return render(request, "../templates/registration/change_password.html")
 
-# def login_view(request):
-#     if request.method == "POST":
-#         username = request.POST['username']
-#         password = request.POST['password']
-#         user = authenticate(request, username=username, password=password)
-#         logger.info("logged in test logger")
-#         if user is not None:
-#             login(request, user)
-#             return redirect('courses_list')
-
-#         else:
-#             messages.error(request, "Username or password invalid")
-#             return redirect('login')
-
-#     return render(request, 'home.html')
-
 def login_view(request):
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
+        logger.info(f"{username} attempted to log in.")
         if user is not None:
-            ldap_obj = LDAPHelper(**{"userName": username})
-            messages.success(request, f"conn =  {ldap_obj.check_user_exists()}")
-            # if(ldap_obj.check_user_exists()):
-            #     messages.success(request, f"active directory present for {username}")
-            #     return redirect('login')
-            # else:
-            #     messages.error(request, f"no active direc for {username}")
+            login(request, user)
+            logger.info(f"{username} to logged in successfully.")
+            return redirect('courses_list')
+
         else:
             messages.error(request, "Username or password invalid")
+            logger.info(f"{username} used incorrect username or password.")
             return redirect('login')
 
     return render(request, 'home.html')
@@ -344,6 +312,7 @@ def courses_list_view(request):
 
 def logout_view(request):
     logout(request)
+    logger.info(f"{request.user.username} logged out successfully.")
     messages.success(request,"Logged out")
     return redirect('login')
 

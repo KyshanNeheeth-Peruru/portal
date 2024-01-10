@@ -122,7 +122,7 @@ class LDAP:
                     "uid": [("MODIFY_REPLACE", self.uid)],
                     "uidNumber": [("MODIFY_REPLACE", self.uidNumber)],
                     "mail": [("MODIFY_REPLACE", self.email)],
-                    "userAccountControl": [("MODIFY_REPLACE", 512)],
+                    # "userAccountControl": [("MODIFY_REPLACE", 512)],   #account will start as active
                 },
             )
             if isAccountNormal:
