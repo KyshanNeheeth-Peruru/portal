@@ -321,8 +321,11 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             ldap_obj = LDAP()
-            checking=ldap_obj.check_user_exists(username)
-            messages.success(request, f"result= {checking} for {username}")
+            if(ldap_obj.check_user_exists(username)):
+                messages.success(request, f"active directory present for {username}")
+                return redirect('login')
+            else:
+                messages.error(request, f"no active direc for {username}")
             # if not ldap_obj.check_user_exists(username):
             #     messages.success(request, f"no active directory account for {username}")
             #     return redirect('login')
