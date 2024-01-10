@@ -55,9 +55,9 @@ class LDAP:
         search_base = 'ou=People,dc=winpcs,dc=cs,dc=umb,dc=edu'
         ldap_conn = self.connect_ldap_server()
         try:
-            ldap_conn.search(search_base,f"(sAMAccountName={username})",attributes=['sAMAccountName'])
+            ldap_conn.search(search_base,"(&(objectClass=person)(sAMAccountName=" + str(userName) + "))",attributes=['sAMAccountName'])
 
-            if search_successful and ldap_conn.entries:
+            if len(connection.entries) > 0:
                 return True
             else:
                 return False
