@@ -42,12 +42,37 @@ class LDAP:
             #"userAccountControl": 512,
         }
     
+    # def check_user_exists(self, username):
+    #     # Connect to LDAP server and perform search query
+    #     ldap_conn = self.connect_ldap_server()
+    #     search_filter = f'(&(objectClass=user)(sAMAccountName={username}))'
+    #     ldap_conn.search(search_base='ou=People,dc=winpcs,dc=cs,dc=umb,dc=edu',search_filter=search_filter, attributes=['cn'])
+    #     return len(ldap_conn.entries) > 0
+    
+
+
     def check_user_exists(self, username):
-        # Connect to LDAP server and perform search query
-        ldap_conn = self.connect_ldap_server()
-        search_filter = f'(&(objectClass=user)(sAMAccountName={username}))'
-        ldap_conn.search(search_base='ou=People,dc=winpcs,dc=cs,dc=umb,dc=edu',search_filter=search_filter, attributes=['cn'])
-        return len(ldap_conn.entries) > 0
+        try:
+            ldap_conn = self.connect_ldap_server()
+            if not ldap_conn:
+                logging.error("Failed to connect to LDAP server.")
+                return False
+
+            search_filter = f'(&(objectClass=user)(sAMAccountName={username}))'
+            search_base = 'ou=People,dc=winpcs,dc=cs,dc=umb,dc=edu'
+        
+            logging.info(f"Performing LDAP search with filter: {search_filter} and base: {search_base}")
+            ldap_conn.search(search_base, search_filter, attributes=['cn'])
+
+            logging.info(f"Number of entries found: {len(ldap_conn.entries)}")
+            for entry in ldap_conn.entries:
+                logging.info(f"Found entry: {entry}")
+
+            return len(ldap_conn.entries) > 0
+        except Exception as e:
+            logging.error(f"Error during LDAP search: {e}")
+            return False
+
 
     def connect_ldap_server(self):
         try:
