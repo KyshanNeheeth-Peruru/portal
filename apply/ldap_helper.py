@@ -23,6 +23,22 @@ class LDAPHelper:
         # self.user_dn = self.get_ldap_users_dn()
         self.fullName = self.get_ldap_users()
         self.user_dn = f"cn={self.fullName},ou=People,dc=winpcs,dc=cs,dc=umb,dc=edu"
+        
+    def check_user_exists(self, username):
+        search_base = 'ou=People,dc=winpcs,dc=cs,dc=umb,dc=edu'
+        ldap_conn = self.connect_ldap_server()
+        try:
+            ldap_conn.search(search_base,"(&(objectClass=person)(sAMAccountName=" + str(userName) + "))",attributes=['sAMAccountName'])
+
+            if len(connection.entries) > 0:
+                return True
+            else:
+                return False
+ 
+        except Exception as e:
+            print(e)
+        finally:
+            ldap_conn.unbind()
 
     def connect_ldap_server(self):
         try:
