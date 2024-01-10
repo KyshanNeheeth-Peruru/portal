@@ -321,11 +321,12 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             ldap_obj = LDAPHelper(**{"userName": username})
-            if(ldap_obj.check_user_exists()):
-                messages.success(request, f"active directory present for {username}")
-                return redirect('login')
-            else:
-                messages.error(request, f"no active direc for {username}")
+            messages.success(request, f"conn =  {ldap_obj.check_user_exists()}")
+            # if(ldap_obj.check_user_exists()):
+            #     messages.success(request, f"active directory present for {username}")
+            #     return redirect('login')
+            # else:
+            #     messages.error(request, f"no active direc for {username}")
         else:
             messages.error(request, "Username or password invalid")
             return redirect('login')
