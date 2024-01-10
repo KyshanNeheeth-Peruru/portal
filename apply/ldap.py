@@ -59,7 +59,7 @@ class LDAP:
                                        "((sAMAccountName=" + str(username) + "))",
                                        attributes=['userName'])
 
-            return results
+            return True
         except Exception as e:
             print(e)
 
