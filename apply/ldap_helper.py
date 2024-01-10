@@ -27,7 +27,6 @@ class LDAPHelper:
     def check_user_exists(self):
         search_base = 'ou=People,dc=winpcs,dc=cs,dc=umb,dc=edu'
         ldap_conn = self.connect_ldap_server()
-        return ldap_conn.bound
         try:
             ldap_conn.search(search_base, "(&(objectClass=person)(sAMAccountName=" + str(self.userName) + "))", attributes=['sAMAccountName'])
 
