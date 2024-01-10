@@ -67,8 +67,6 @@ class LDAP:
         try:
             isUserAdded = ldap_conn.add(self.user_dn, attributes=self.ldap_attr)
             if isUserAdded:
-                #ldap_conn.extend.microsoft.unlock_account(self.user_dn)  #unlocking here
-                #ldap_conn.modify(self.user_dn, {"userAccountControl": [("MODIFY_REPLACE", 512)]})"userAccountControl": [("MODIFY_REPLACE", 512)]})    #unlocking here
                 ldap_conn.unbind()
                 self.set_new_user_password()
                 logger.info(f"User:{self.userName}  is added to LDAP")
@@ -76,7 +74,7 @@ class LDAP:
                 helper.send_email(self.userName,
                                   LDAPActionNames.USER_EXISTS,
                                   LDAPEmailBody.USER_EXISTS)
-                logger.debug(f"User:{self.userName}  is not added")
+                logger.debug(f"User:{self.userName}  is not added. (User might exist)")
             
             
             
@@ -86,10 +84,9 @@ class LDAP:
             # logger.info(f"User:{self.userName}  is added to LDAP")
 
         except Exception as ex:
-            # helper.send_email(self.userName,
-            #                   LDAPActionNames.ADD_NEW_USER,
-            #                   LDAPActionNames.ADD_NEW_USER, str(ex))
-
+            helper.send_email(self.userName,
+                              LDAPActionNames.ADD_NEW_USER,
+                              LDAPActionNames.ADD_NEW_USER, str(ex))
             logger.error(f"Error on Adding new User to LDAP. user_name: {self.userName}", ex)
 
     def set_new_user_password(self):
@@ -131,11 +128,12 @@ class LDAP:
             if isAccountNormal:
                 ldap_conn.unbind()
                 self.add_user_to_ugrad()
+                logger.info(f"Attributes are set for user:{self.userName} ")
             else:
                 helper.send_email(self.userName,
                                   LDAPActionNames.SET_NEW_USER_ATTRIBUTES,
                                   LDAPEmailBody.SET_NEW_USER_ATTRIBUTES)
-                logger.debug(f"User:{self.userName} attributes is not set")
+                logger.info(f"Failed to set attributed for user: {self.userName}")
         except Exception as ex:
             helper.send_email(self.userName,
                               LDAPActionNames.ERROR_NEW_USER_ATTRIBUTES,
