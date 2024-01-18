@@ -182,7 +182,7 @@ def register_view(request):
                 messages.error(request, 'Username must not start with a number and must be 3 to 8 characters long.')
                 return render(request, "../templates/registration/register.html")
             
-            if (len(pasw1) <8):
+            if (len(pasw1) <10):
                 messages.error(request, 'Password need to be more than 8 Characters.')
                 return render(request, "../templates/registration/register.html")
                 
@@ -255,7 +255,7 @@ def forgot_pasw_view(request, uidb64,token):
                 messages.error(request, 'Password may not contain username.')
                 return render(request, '../templates/registration/change_password.html')
             
-            if (len(new_password1) <8):
+            if (len(new_password1) <10):
                 messages.error(request, 'Password need to be more than 8 Characters.')
                 return render(request, '../templates/registration/change_password.html')
                 
