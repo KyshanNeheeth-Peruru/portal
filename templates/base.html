@@ -49,9 +49,6 @@
 
             {% if user.is_authenticated %}
                 <a class="nav-link">Hi {{user.first_name}} {{user.last_name}}
-                    {% if ip %}
-                    <br>IP: {{ ip }}</a>
-                    {% endif %}
 
                 <a class=" nav-link text-muted"> Welcome to the Computer Science Portal </a>
 
