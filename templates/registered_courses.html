@@ -8,6 +8,7 @@
 {% block content %}
        <div class="table-responsive-sm" >
             <h2>Courses registered for {{ current_semester }}</h2>
+            <h5>If you have selected a wrong section for the course, please email us at <a href = "mailto: operator@cs.umb.edu">operator@cs.umb.edu</a> to correct it.</h5>
             {% csrf_token %}
             <table class="table d-none d-sm-table">
                 <thead class="thead-light">
