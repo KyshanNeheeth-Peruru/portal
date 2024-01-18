@@ -6,9 +6,10 @@
 {% load crispy_forms_filters %}
 
 {% block content %}
+    {% if current_semester %}
        <div class="table-responsive-sm" >
             <form action="/courses/" class="w-100" method="POST" class="form-group">
-            <h2>Please select your courses for {{ current_semester }}</h2>
+            <h2>Please select your courses forr {{ current_semester }}</h2>
             {% csrf_token %}
             <table class="table d-none d-sm-table">
                 <thead class="thead-light">
@@ -64,4 +65,7 @@
         
             </form>
         </div>
+    {% else %}
+        <h2>Courses for current semester not available yet.</h2>
+    {% endif %}
 {% endblock %}

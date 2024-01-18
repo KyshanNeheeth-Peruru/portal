@@ -50,6 +50,6 @@ urlpatterns = [
     path("unix2campus/", apply_views.unix2campus, name='unix2campus'),
     path("add_data/", apply_views.add_data, name='add_data'),
     path('confirm_add/', apply_views.confirm_add, name='confirm_add'),
-
+    path("robots.txt",TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),),
     
 ]
