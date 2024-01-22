@@ -178,6 +178,11 @@ def register_view(request):
                 messages.error(request, 'Password may not contain username.')
                 return render(request, "../templates/registration/register.html")
             
+            for char in username:
+                if char.isupper():
+                    messages.error(request, 'Please use all lower case in username.')
+                    return render(request, "../templates/registration/register.html")
+            
             if (len(unix_name) < 3) or (len(unix_name) > 8) or (unix_name[0].isdigit()):
                 messages.error(request, 'Username must not start with a number and must be 3 to 8 characters long.')
                 return render(request, "../templates/registration/register.html")
