@@ -178,6 +178,10 @@ def register_view(request):
                 messages.error(request, 'Password may not contain username.')
                 return render(request, "../templates/registration/register.html")
             
+            if ' ' in username:
+                messages.error(request, 'Username should not contain spaces.')
+                return render(request, "../templates/registration/register.html")
+            
             for char in username:
                 if char.isupper():
                     messages.error(request, 'Please use all lower case in username.')
