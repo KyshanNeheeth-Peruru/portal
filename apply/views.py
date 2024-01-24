@@ -178,8 +178,8 @@ def register_view(request):
                 messages.error(request, 'Password may not contain username.')
                 return render(request, "../templates/registration/register.html")
             
-            if ' ' in username:
-                messages.error(request, 'Username should not contain spaces.')
+            if not username.isalnum():
+                messages.error(request, 'Username should be alphanumeric.')
                 return render(request, "../templates/registration/register.html")
             
             for char in username:
