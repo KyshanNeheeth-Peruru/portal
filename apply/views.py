@@ -169,6 +169,9 @@ def register_view(request):
         if not email.endswith("@umb.edu"):
             messages.error(request, "Email must be from @umb.edu domain")
             return render(request, "../templates/registration/register.html")
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "A user already exists with this email.")
+            return render(request, "../templates/registration/register.html")
         if(pasw1!=pasw2):
             messages.error(request,"Passwords dont match")
             return render(request, "../templates/registration/register.html")
