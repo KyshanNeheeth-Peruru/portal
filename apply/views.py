@@ -171,7 +171,7 @@ def register_view(request):
                     last_name=last_name_nonum
                                 
         if User.objects.filter(first_name=firstname, last_name=lastname).exists():
-            messages.error(request, "Another user is using the same first name and last name.")
+            messages.error(request, "Another user is using the same first name and last name. Please contact email us to finish your registration process.")
             return render(request, "../templates/registration/register.html")
         
         if not email.endswith("@umb.edu"):
