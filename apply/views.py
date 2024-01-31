@@ -161,11 +161,19 @@ def register_view(request):
             last_name = name_parts[1]
             if last_name[-3:].isdigit():
                 last_name_nonum = last_name[:-3]
-                users_no_num_lastname = User.objects.filter(first_name=firstname, last_name=last_name_nonum)
+                users_no_num_lastname = User.objects.filter(first_name=first_name, last_name=last_name_nonum)
+                firstname = first_name
+                lastname = last_name_nonum
                 if users_no_num_lastname.exists():
                     last_name=name_parts[1]
+                    lastname=last_name
                 else:
                     last_name=last_name_nonum
+                                
+        if User.objects.filter(first_name=firstname, last_name=lastname).exists():
+            messages.error(request, "Another user is using the same first name and last name.")
+            return render(request, "../templates/registration/register.html")
+        
         if not email.endswith("@umb.edu"):
             messages.error(request, "Email must be from @umb.edu domain")
             return render(request, "../templates/registration/register.html")
