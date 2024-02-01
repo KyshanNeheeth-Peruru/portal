@@ -1,5 +1,5 @@
 from django.contrib import admin
-from apply.models import Courses, UserCourses, Semesters, Faq, CoursesAdmin, Random
+from apply.models import Courses, UserCourses, Semesters, Faq, CoursesAdmin, Random, UserCoursesAdmin
 
 # Register your models here.
 # class UserCoursesAdmin(admin.ModelAdmin):
