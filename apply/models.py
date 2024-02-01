@@ -68,6 +68,9 @@ class UserCourses(models.Model):
     def __unicode__(self):
         return self.user.username
     
+class UserCoursesAdmin(admin.ModelAdmin):
+    search_fields = ['user__username', 'course__course_name', 'semester_year']
+    
 class Faq(models.Model):
     question=models.CharField(max_length=250)
     answer=models.TextField()

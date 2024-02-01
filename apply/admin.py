@@ -5,7 +5,7 @@ from apply.models import Courses, UserCourses, Semesters, Faq, CoursesAdmin, Ran
 # class UserCoursesAdmin(admin.ModelAdmin):
 #     search_fields = ['user__username', 'course__course_name', 'semester_year']
 admin.site.register(Courses, CoursesAdmin)
-admin.site.register(UserCourses)
+admin.site.register(UserCourses, UserCoursesAdmin)
 admin.site.register(Semesters)
 admin.site.register(Faq)
 admin.site.register(Random)
