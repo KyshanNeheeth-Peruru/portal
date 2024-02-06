@@ -79,5 +79,5 @@ class Faq(models.Model):
         return self.question
     
 class Random(models.Model):
-    alertls=models.CharField(max_length=250)
-    stats=models.CharField(max_length=250)
+    alerts=models.CharField(max_length=250,  blank=True)
+    stats=models.CharField(max_length=250,  blank=True)

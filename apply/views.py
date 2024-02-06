@@ -304,6 +304,7 @@ def forgot_pasw_view(request, uidb64,token):
     return render(request, "../templates/registration/change_password.html")
 
 def login_view(request):
+    randomobj = Random.objects.exclude(alerts__isnull=True).exclude(alerts='').first()
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
@@ -318,7 +319,8 @@ def login_view(request):
             messages.error(request, "Username or password invalid")
             logger.info(f"{username} used incorrect username or password.")
             return redirect('login')
-
+    if randomobj is not None:
+        return render(request, "home.html", {"alertmsg": randomobj.alerts})
     return render(request, 'home.html')
 
 @login_required
