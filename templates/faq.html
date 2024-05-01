@@ -45,7 +45,7 @@
 
   {% for faq in faqs %}
     <div style="margin-top: 30px;">
-      <h3 id="{{ faq.question }}">{{ faq.question }}</h3>
+      <h3 id="{{ faq.question }}"style="text-decoration: underline;">{{ faq.question }}</h3>
       <pre>{{ faq.answer }}</pre>
     </div>
   {% endfor %}
