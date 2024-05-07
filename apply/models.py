@@ -81,3 +81,10 @@ class Faq(models.Model):
 class Random(models.Model):
     alerts=models.CharField(max_length=250,  blank=True)
     stats=models.CharField(max_length=250,  blank=True)
+    
+class Misc(models.Model):
+    setting = models.IntegerField()
+    value = models.IntegerField()
+    
+    def __str__(self):
+        return f"Setting: {self.setting}, Value: {self.value}"

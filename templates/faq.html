@@ -38,15 +38,15 @@
   <ul>
     {% for faq in faqs %}
       <li>
-        <h5><a href="#{{ faq.question }}">{{ faq.question }}</a></h5>
+        <h5><a href="#faq{{ forloop.counter }}">FAQ {{ forloop.counter | default_if_none:'01' }}: {{ faq.question }}</a></h5>
       </li>
     {% endfor %}
   </ul>
 
   {% for faq in faqs %}
     <div style="margin-top: 30px;">
-      <h3 id="{{ faq.question }}"style="text-decoration: underline;">{{ faq.question }}</h3>
-      <pre>{{ faq.answer }}</pre>
+      <h3 id="faq{{ forloop.counter }}" style="text-decoration: underline;">FAQ {{ forloop.counter | default_if_none:'01' }}: {{ faq.question }}</h3>
+      <pre>{{ faq.answer | safe }}</pre>
     </div>
   {% endfor %}
 
