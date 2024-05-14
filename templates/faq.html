@@ -1,57 +1,66 @@
 {% extends 'base.html' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}FAQ{% endblock %}
 
 {% block content %}
+<h3 style="text-align: center; margin-top: 20px;">Frequently Asked Questions</h3>
 
-  <h3 style="text-align: center; margin-top: 20px;">Frequently Asked Questions</h3>
-
-  <style>
+<style>
     html {
-      scroll-behavior: smooth;
+        scroll-behavior: smooth;
     }
     h3 {
-      scroll-margin-top: 50px;
+        scroll-margin-top: 50px;
     }
     ul {
-      list-style-type: none;
-      padding: 0;
+        list-style-type: none;
+        padding: 0;
     }
     li {
-      margin-bottom: 10px;
+        margin-bottom: 10px;
     }
     h5 {
-      font-size: 18px;
-      font-weight: bold;
-      text-decoration: none;
-      color: #007bff;
-      font-family: Arial, sans-serif;
-      margin: 0;
+        font-size: 18px;
+        font-weight: bold;
+        text-decoration: none;
+        color: #007bff;
+        font-family: Arial, sans-serif;
+        margin: 0;
     }
     p {
-      font-size: 16px;
-      color: #666;
-      margin: 0;
+        font-size: 16px;
+        color: #666;
+        margin: 0;
     }
-  </style>
+</style>
 
-  <ul>
+<ul>
     {% for faq in faqs %}
-      <li>
+    <li>
         <h5><a href="#faq{{ forloop.counter }}">FAQ {{ forloop.counter | default_if_none:'01' }}: {{ faq.question }}</a></h5>
-      </li>
+    </li>
     {% endfor %}
-  </ul>
+</ul>
 
-  {% for faq in faqs %}
-    <div style="margin-top: 30px;">
-      <h3 id="faq{{ forloop.counter }}" style="text-decoration: underline;">FAQ {{ forloop.counter | default_if_none:'01' }}: {{ faq.question }}</h3>
-      <pre>{{ faq.answer | safe }}</pre>
-    </div>
-  {% endfor %}
+{% for faq in faqs %}
+<div style="margin-top: 30px;">
+    <h3 id="faq{{ forloop.counter }}" style="text-decoration: underline;">FAQ {{ forloop.counter | default_if_none:'01' }}: {{ faq.question }}</h3>
+    <pre>{{ faq.answer | safe }}</pre>
+    {% if faq.pdfs.exists %}
+    <p>Related PDFs:</p>
+    <ul>
+        {% for pdf in faq.pdfs.all %}
+        <li><a href="{{ pdf.file.url }}">{{ pdf.filename }}</a></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+{% endfor %}
 
-  <h3 style="text-align: center; margin-top: 30px;">
+<hr/>
+
+<h3 style="text-align: center; margin-top: 30px;">
     If you have any further queries or are facing issues with class registration, please email us at
     <a href="mailto:operator@cs.umb.edu">operator@cs.umb.edu</a>.
-  </h3>
+</h3>
 {% endblock %}

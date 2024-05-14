@@ -1,5 +1,5 @@
 from django.contrib import admin
-from apply.models import Courses, UserCourses, Semesters, Faq, CoursesAdmin, Random, UserCoursesAdmin, Misc
+from apply.models import Courses, UserCourses, Semesters, Faq, CoursesAdmin, Random, UserCoursesAdmin, Misc, FaqPdf
 
 # Register your models here.
 # class UserCoursesAdmin(admin.ModelAdmin):
@@ -8,5 +8,6 @@ admin.site.register(Courses, CoursesAdmin)
 admin.site.register(UserCourses, UserCoursesAdmin)
 admin.site.register(Semesters)
 admin.site.register(Faq)
+admin.site.register(FaqPdf)
 admin.site.register(Random)
 admin.site.register(Misc)

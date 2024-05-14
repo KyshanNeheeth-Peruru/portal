@@ -20,6 +20,8 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.views.generic.base import TemplateView
 from django.urls import re_path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from apply import views as apply_views
 
@@ -53,3 +55,5 @@ urlpatterns = [
     path("robots.txt",TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),),
     
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
