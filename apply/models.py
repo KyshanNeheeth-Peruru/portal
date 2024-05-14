@@ -81,7 +81,7 @@ class Faq(models.Model):
 
 class FaqPdf(models.Model):
     faq = models.ForeignKey(Faq, related_name='pdfs', on_delete=models.CASCADE)
-    file = models.FileField(upload_to='static/pdfs/')
+    file = models.FileField(upload_to='pdfs/')
 
     def __str__(self):
         return os.path.basename(self.file.name)
