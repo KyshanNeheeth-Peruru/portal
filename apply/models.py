@@ -83,7 +83,7 @@ class Random(models.Model):
     stats=models.CharField(max_length=250,  blank=True)
     
 class Misc(models.Model):
-    setting = models.IntegerField()
+    setting = models.CharField(max_length=50, unique=True)
     value = models.IntegerField()
     
     def __str__(self):

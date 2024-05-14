@@ -13,7 +13,7 @@ from django.contrib.auth import login, logout, get_user_model, authenticate, upd
 from apply.constants import ActionNames
 from apply.forms import RegistrationForm, AdminView
 from apply.helper import insert_courses_into_user_courses, semester_year, change_ldap_password, sem_name, get_client_ip
-from apply.models import Courses, UserCourses, Semesters, Faq, Random
+from apply.models import Courses, UserCourses, Semesters, Faq, Random, Misc
 from apply.utils import token_generator
 from apply.ldap_helper import LDAPHelper
 from apply.remote_connect import RemoteConnect
@@ -144,6 +144,7 @@ def forgot_password(request):
     return render(request, "../templates/registration/password_reset_form.html")
 
 def register_view(request):
+    account_registration = bool(Misc.objects.get(setting='is_account_registration_enabled').value)
     if request.method == "POST":
         username= request.POST['username']
         firstname= request.POST['firstname']
@@ -229,7 +230,7 @@ def register_view(request):
             send_activation_email(request, user)
             return render(request, "../templates/home.html", {"activated": False})
             # return render(request, "../templates/registration/register.html")      
-    return render(request, "../templates/registration/register.html")
+    return render(request, "../templates/registration/register.html", {"account_registration": account_registration})
 
 def activate(request, uidb64, token):
     User = get_user_model()
@@ -325,12 +326,13 @@ def login_view(request):
 
 @login_required
 def courses_list_view(request):
+    course_registration = bool(Misc.objects.get(setting='is_course_registration_enabled').value)
     current_semester = Semesters.objects.filter(is_active=True).first()
     courses = Courses.objects.filter(course_semester=current_semester).order_by("course_number")
     #courses = Courses.objects.all()
     registered_courses = UserCourses.objects.filter(semester_year=current_semester, user=request.user)
     available_courses = Courses.objects.filter(course_semester=current_semester).exclude(id__in=registered_courses.values('course')).order_by("course_number")
-    return render(request,"courses.html",{"courses": available_courses, "current_semester": current_semester})
+    return render(request,"courses.html",{"courses": available_courses, "current_semester": current_semester, "course_registration": course_registration})
 
 def logout_view(request):
     logout(request)

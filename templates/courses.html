@@ -57,10 +57,14 @@
                     {% endfor %}
                 </tbody>
             </table>
-            {% if courses|length == 0 %}
-            <button type="submit" hidden="hidden" class="btn btn-primary w-100">Submit</button>
+            {% if course_registration%}
+                {% if courses|length == 0 %}
+                    <button type="submit" hidden="hidden" class="btn btn-primary w-100">Submit</button>
+                {% else %}
+                    <button type="submit" class="btn btn-primary w-100">Submit</button>
+                {% endif %}
             {% else %}
-            <button type="submit" class="btn btn-primary w-100">Submit</button>
+            <h3>Course registration is currently disabled. If you need assistance, please contact us at <a href="mailto:operator@cs.umb.edu">operator@cs.umb.edu</a>.</h3>
             {% endif %}
         
             </form>
