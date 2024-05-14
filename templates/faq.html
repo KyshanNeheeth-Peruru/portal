@@ -46,14 +46,6 @@
 <div style="margin-top: 30px;">
     <h3 id="faq{{ forloop.counter }}" style="text-decoration: underline;">FAQ {{ forloop.counter | default_if_none:'01' }}: {{ faq.question }}</h3>
     <pre>{{ faq.answer | safe }}</pre>
-    {% if faq.pdfs.exists %}
-    <p>Related PDFs:</p>
-    <ul>
-        {% for pdf in faq.pdfs.all %}
-        <li><a href="{{ pdf.file.url }}">{{ pdf.filename }}</a></li>
-        {% endfor %}
-    </ul>
-    {% endif %}
 </div>
 {% endfor %}
 

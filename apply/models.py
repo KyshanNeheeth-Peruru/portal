@@ -78,17 +78,6 @@ class Faq(models.Model):
     
     def __str__(self):
         return self.question
-
-class FaqPdf(models.Model):
-    faq = models.ForeignKey(Faq, related_name='pdfs', on_delete=models.CASCADE)
-    file = models.FileField(upload_to='pdfs/')
-
-    def __str__(self):
-        return os.path.basename(self.file.name)
-
-    def filename(self):
-        return os.path.basename(self.file.name)
-    
 class Random(models.Model):
     alerts=models.CharField(max_length=250,  blank=True)
     stats=models.CharField(max_length=250,  blank=True)

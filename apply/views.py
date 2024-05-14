@@ -486,8 +486,7 @@ def printQuota(request):
     return render(request, "../templates/printQuota.html")
 
 def faq(request):
-    # faqs=Faq.objects.all()
-    faqs = Faq.objects.prefetch_related('pdfs').all()
+    faqs=Faq.objects.all()
     return render(request, "../templates/faq.html",{'faqs':faqs})
 
 @login_required
