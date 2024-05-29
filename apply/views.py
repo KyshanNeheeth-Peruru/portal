@@ -374,9 +374,9 @@ def selected_courses(request):
                 # print(f"sudo python3 /srv/course_directory-vk.py -user {userName} "
                 #                               f"-course {selectedCourse} -sem {semester_name} "
                 #                               f"-prof {prof_unix_name} -uid {uid} -graderGroup {graderGroup}")
-                # courses_counter = Misc.objects.get(setting='courses_registered_counter')
-                # courses_counter.value = str(int(courses_counter.value) + 1)
-                # courses_counter.save()
+                courses_counter = Misc.objects.get(setting='course_registered_counter')
+                courses_counter.value = str(int(courses_counter.value) + 1)
+                courses_counter.save()
                 remote_connection.execute_command(f"sudo python3 /srv/course_directory-vk.py -user {userName} "
                                               f"-course {selectedCourse} -sem {semester_name} "
                                               f"-prof {prof_unix_name} -uid {uid} -graderGroup {graderGroup}")
