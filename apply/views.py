@@ -302,6 +302,9 @@ def forgot_pasw_view(request, uidb64,token):
             change_ldap_password(user, new_password1)
             user.save()
             update_session_auth_hash(request, user)
+            pasw_change_counter = Misc.objects.get(setting='password_change_counter')
+            pasw_change_counter.value = str(int(pasw_change_counter.value) + 1)
+            pasw_change_counter.save()
             messages.success(request,'Password successfully changed.')
             return redirect('login')
         else:
