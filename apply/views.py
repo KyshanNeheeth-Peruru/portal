@@ -144,7 +144,9 @@ def forgot_password(request):
     return render(request, "../templates/registration/password_reset_form.html")
 
 def register_view(request):
-    account_registration = bool(Misc.objects.get(setting='is_account_registration_enabled').value)
+    account_registration = (Misc.objects.get(setting='is_account_registration_enabled').value.lower()=="true")
+    if account_registration!=True:
+        return render(request, "../templates/registration/registration_disabled.html")
     if request.method == "POST":
         username= request.POST['username']
         firstname= request.POST['firstname']
@@ -228,9 +230,12 @@ def register_view(request):
             deactivate_user(user)
             create_ldap_user(request)
             send_activation_email(request, user)
+            user_counter = Misc.objects.get(setting='users_registered_counter')
+            user_counter.value = str(int(user_counter.value) + 1)
+            user_counter.save()
             return render(request, "../templates/home.html", {"activated": False})
             # return render(request, "../templates/registration/register.html")      
-    return render(request, "../templates/registration/register.html", {"account_registration": account_registration})
+    return render(request, "../templates/registration/register.html")
 
 def activate(request, uidb64, token):
     User = get_user_model()
@@ -326,7 +331,7 @@ def login_view(request):
 
 @login_required
 def courses_list_view(request):
-    course_registration = bool(Misc.objects.get(setting='is_course_registration_enabled').value)
+    course_registration = (Misc.objects.get(setting='is_course_registration_enabled').value.lower()=="true")
     current_semester = Semesters.objects.filter(is_active=True).first()
     courses = Courses.objects.filter(course_semester=current_semester).order_by("course_number")
     #courses = Courses.objects.all()
@@ -364,13 +369,14 @@ def selected_courses(request):
                 ldapCourseSection = f"{selectedCourse}-{selectedCourseSection}" #ldap
                 graderGroup = f"{selectedCourse}-{selectedCourseSection}G" #ldap
                 uid = obj.get_uid_number() #ldap
-                # print("sem name:")
-                # print(semester_name)
                 obj.add_user_to_courses(ldapCourseSection) #ldap
                 
                 # print(f"sudo python3 /srv/course_directory-vk.py -user {userName} "
                 #                               f"-course {selectedCourse} -sem {semester_name} "
                 #                               f"-prof {prof_unix_name} -uid {uid} -graderGroup {graderGroup}")
+                courses_counter = Misc.objects.get(setting='courses_registered_counter')
+                courses_counter.value = str(int(courses_counter.value) + 1)
+                courses_counter.save()
                 remote_connection.execute_command(f"sudo python3 /srv/course_directory-vk.py -user {userName} "
                                               f"-course {selectedCourse} -sem {semester_name} "
                                               f"-prof {prof_unix_name} -uid {uid} -graderGroup {graderGroup}")
@@ -446,6 +452,9 @@ def change_password(request):
             change_ldap_password(user, new_password1)
             user.save()
             update_session_auth_hash(request, user)
+            pasw_change_counter = Misc.objects.get(setting='password_change_counter')
+            pasw_change_counter.value = str(int(pasw_change_counter.value) + 1)
+            pasw_change_counter.save()
             messages.success(request,'Password successfully changed.')
             return render(request, '../templates/registration/change_password.html')
         else:

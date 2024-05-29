@@ -7,7 +7,7 @@
         <meta http-equiv="Refresh" content="0; url='/' />
         <!-- <h2>You are already logged in, please <a href="/logout"> log out </a></h2> -->
     {% else  %}
-    {% if account_registration%}
+    
         <div class="p-1 w-100 h-100">
             <h2>Create your UMB CS Portal Account</h2>
             <h6>Please email us at <a href = "mailto: operator@cs.umb.edu">operator@cs.umb.edu</a> if you do not recevice activation link to your email.</h6>
@@ -64,8 +64,6 @@
             </div>
             <p style="font-size: 20px;">Already have an account? <a href="{% url 'login' %}">Login</a>!</p>
         </div>
-    {% else  %}
-        <h3>Registration is currently disabled. If you need assistance, please contact us at <a href="mailto:operator@cs.umb.edu">operator@cs.umb.edu</a>.</h3>
-    {% endif %}
+    
     {% endif %}
 {% endblock %}

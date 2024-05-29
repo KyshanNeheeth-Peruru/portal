@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        <!-- Redirect the user to the courses page if already logged in -->
+        <meta http-equiv="Refresh" content="0; url='/' />
+        <!-- <h2>You are already logged in, please <a href="/logout"> log out </a></h2> -->
+    {% else  %}
+        <h3>Registration is currently disabled. If you need assistance, please contact us at <a href="mailto:operator@cs.umb.edu">operator@cs.umb.edu</a>.</h3>
+    {% endif %}
+{% endblock %}
