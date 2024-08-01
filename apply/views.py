@@ -155,6 +155,10 @@ def register_view(request):
         pasw1= request.POST['pasw1']
         pasw2= request.POST['pasw2']
         
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "A user with this username already exists. Please choose a different username.")
+            return render(request, "../templates/registration/register.html")
+        
         users_with_same_name = User.objects.filter(first_name=firstname, last_name=lastname)
         if users_with_same_name.exists():
             email_parts = email.split('@')
