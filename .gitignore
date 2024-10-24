@@ -3,6 +3,7 @@
 *.pyc
 portal/__pycache__/urls.cpython-311.pyc
 portal\__pycache__\urls.cpython-311.pyc
+portalenv
 *.pyc
 */*/*/__pycache__/
 */*/__pycache__/
