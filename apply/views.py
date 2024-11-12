@@ -65,12 +65,12 @@ def deactivate_user(user):
 
 def create_ldap_user(request):
     user = {
-        "userName": request.POST["username"],
-        "userPassword": request.POST["pasw1"],
-        "fullName": f"{request.POST['firstname'].capitalize()} {request.POST['lastname'].capitalize()}",
-        "firstName": request.POST["firstname"].capitalize(),
-        "lastName": request.POST["lastname"].capitalize(),
-        "email": request.POST["email"],
+        "userName": request["username"],
+        "userPassword": request["pasw1"],
+        "fullName": f"{request['firstname'].capitalize()} {request['lastname'].capitalize()}",
+        "firstName": request["firstname"].capitalize(),
+        "lastName": request["lastname"].capitalize(),
+        "email": request["email"],
     }
     obj = LDAP(**user)
     obj.add_new_user()
@@ -236,7 +236,15 @@ def register_view(request):
             user.last_name = lastname
             user.save()
             deactivate_user(user)
-            create_ldap_user(request)
+            updated_request = {
+                "username": username,
+                "firstname": firstname,
+                "lastname": lastname,
+                "email": email,
+                "pasw1": pasw1,
+                "pasw2": pasw2,
+            }
+            create_ldap_user(updated_request)
             send_activation_email(request, user)
             user_counter = Misc.objects.get(setting='users_registered_counter')
             user_counter.value = str(int(user_counter.value) + 1)
