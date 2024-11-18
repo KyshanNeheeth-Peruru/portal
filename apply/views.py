@@ -177,8 +177,7 @@ def register_view(request):
                     lastname=last_name
                 else:
                     last_name=last_name_nonum
-            request.POST['firstname'] =firstname
-            request.POST['lastname'] =lastname
+            
             
                         
         if User.objects.filter(first_name=firstname, last_name=lastname).exists():
