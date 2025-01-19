@@ -278,6 +278,12 @@ def activate_user(user):
     obj = LDAPHelper(**{"userName": user})
     obj.unlock_ldap_account()
 
+def check_username_availability(request):
+    username = request.GET.get('username', '')
+    available = not User.objects.filter(username=username).exists()
+    return JsonResponse({'available': available})
+
+
 def forgot_pasw_view(request, uidb64,token):
     try:
         # uid = force_str(urlsafe_base64_decode(uidb64))

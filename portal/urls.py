@@ -32,6 +32,7 @@ urlpatterns = [
     path('login/', apply_views.login_view, name='login'),
     path('courses_list/', apply_views.courses_list_view, name='courses_list'),
     path("register/", apply_views.register_view),
+     path('check-username/', apply_views.check_username_availability, name='check_username'),
     path('create/<uidb64>/<token>/', apply_views.register_view, name='register_view'),
     path('forgot_password/', apply_views.forgot_password, name='forgotpasw'),
     path('reset/<uidb64>/<token>/', apply_views.forgot_pasw_view, name='password_reset_confirm'),

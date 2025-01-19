@@ -4,7 +4,7 @@
 {% block content %}
     {% if user.is_authenticated %}
         <!-- Redirect the user to the courses page if already logged in -->
-        <meta http-equiv="Refresh" content="0; url='/' />
+        <meta http-equiv="Refresh" content="0; url='/'" />
         <!-- <h2>You are already logged in, please <a href="/logout"> log out </a></h2> -->
     {% else  %}
     
@@ -16,7 +16,7 @@
                 <div class="form-group mb-9">
                     <label for="username">Username<span class="asteriskField">*</span></label>
                     <input type="text" class="form-control form-control-user" id="username" name="username">
-                    <small id="hint_id_username" class="form-text text-muted">Username must be lowercase letters (a-z), numbers (0-9), and 3 to 8 characters long</small>
+                    {% comment %} <small id="hint_id_username" class="form-text text-muted">Username must be lowercase letters (a-z), numbers (0-9), and 3 to 8 characters long</small> {% endcomment %}
                 </div>
                 <div class="form-group mb-9">
                     <label for="firstname">First Name<span class="asteriskField">*</span></label>
@@ -29,7 +29,7 @@
                 <div class="form-group mb-9">
                     <label for="email">Email Address<span class="asteriskField">*</span></label>
                     <input type="email" class="form-control form-control-user" id="email" name="email">
-                    <small id="hint_id_email" class="form-text text-muted">Must be @umb.edu email Address.</small>
+                    {% comment %} <small id="hint_id_email" class="form-text text-muted">Must be @umb.edu email Address.</small> {% endcomment %}
                 </div>
                 <div class="form-group mb-9">
                     <label for="pasw1">Password<span class="asteriskField">*</span></label>
@@ -66,4 +66,159 @@
         </div>
     
     {% endif %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const usernameInput = document.getElementById('username');
+            const firstnameInput = document.getElementById('firstname');
+            const lastnameInput = document.getElementById('lastname');
+            const emailInput = document.getElementById('email');
+            const pasw1Input = document.getElementById('pasw1');
+            const pasw2Input = document.getElementById('pasw2');
+    
+            const usernameError = document.createElement('small');
+            const firstnameError = document.createElement('small');
+            const lastnameError = document.createElement('small');
+            const emailError = document.createElement('small');
+            const pasw1Error = document.createElement('small');
+            const pasw2Error = document.createElement('small');
+            const passwordRequirements = document.createElement('div');
+            const toggleRequirementsButton = document.createElement('button');
+            passwordRequirements.className = 'password-requirements';
+            passwordRequirements.style.display = 'none';
+    
+            usernameError.className = 'form-text text-danger';
+            firstnameError.className = 'form-text text-danger';
+            lastnameError.className = 'form-text text-danger';
+            emailError.className = 'form-text text-danger';
+            pasw1Error.className = 'form-text text-danger';
+            pasw2Error.className = 'form-text text-danger';
+            
+    
+            
+            
+    
+            usernameInput.parentNode.appendChild(usernameError);
+            firstnameInput.parentNode.appendChild(firstnameError);
+            lastnameInput.parentNode.appendChild(lastnameError);
+            emailInput.parentNode.appendChild(emailError);
+            pasw1Input.parentNode.appendChild(pasw1Error);
+            pasw2Input.parentNode.appendChild(pasw2Error);
+            
+    
+            
+    
+            
+    
+            // Password validation
+        function validatePassword(password) {
+            const username = usernameInput.value.toLowerCase();
+            let isValid = true;
+    
+            // Check minimum length
+            if (password.length < 10) {
+                isValid = false;
+            }
+            // Check if password contains username
+            if (password.includes(username)) {
+                isValid = false;
+            }
+    
+            // Check character categories
+            const categories = [
+                /[A-Z]/,  // Uppercase
+                /[a-z]/,  // Lowercase
+                /[0-9]/,  // Digits
+                /[^A-Za-z0-9]/  // Special characters
+            ];
+    
+            const categoriesPresent = categories.filter(cat => cat.test(password)).length;
+            if (categoriesPresent < 3) {
+                isValid = false;
+            }
+    
+            return isValid;
+        }
+    
+        usernameInput.addEventListener('input', function() {
+            const username = this.value.trim();
+            if (!username) {
+                usernameError.textContent = 'Username is required.';
+            } else if (!/^[a-z0-9]{3,8}$/.test(username)) {
+                usernameError.textContent = 'Username must be 3 to 8 characters long and contain only lowercase letters and numbers.';
+            } else {
+                usernameError.textContent = '';
+    
+                // Check username availability
+                fetch(`/check-username/?username=${username}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.available) {
+                            usernameError.textContent = 'Username is already taken.';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error checking username availability:', error);
+                    });
+            }
+        });
+    
+            
+    
+            firstnameInput.addEventListener('input', function() {
+                const firstname = this.value.trim();
+                if (!firstname) {
+                    firstnameError.textContent = 'First name is required.';
+                } else {
+                    firstnameError.textContent = '';
+                }
+            });
+    
+            lastnameInput.addEventListener('input', function() {
+                const lastname = this.value.trim();
+                if (!lastname) {
+                    lastnameError.textContent = 'Last name is required.';
+                } else {
+                    lastnameError.textContent = '';
+                }
+            });
+    
+            emailInput.addEventListener('input', function() {
+                const email = this.value.trim();
+                if (!email) {
+                    emailError.textContent = 'Email is required.';
+                } else if (!email.endsWith('@umb.edu')) {
+                    emailError.textContent = 'Must be @umb.edu email Address.';
+                } else {
+                    emailError.textContent = '';
+                }
+            });
+    
+            pasw1Input.addEventListener('input', function() {
+                const password = this.value;
+                if (!validatePassword(password)) {
+                    pasw1Error.textContent = 'The password does not meet the requirements.';
+                } else {
+                    pasw1Error.textContent = '';
+                }
+        
+                // Check password matching if pasw2 has a value
+                if (pasw2Input.value) {
+                    if (password !== pasw2Input.value) {
+                        pasw2Error.textContent = 'Passwords do not match.';
+                    } else {
+                        pasw2Error.textContent = '';
+                    }
+                }
+            });
+        
+            pasw2Input.addEventListener('input', function() {
+                const password2 = this.value;
+                if (password2 !== pasw1Input.value) {
+                    pasw2Error.textContent = 'Passwords do not match.';
+                } else {
+                    pasw2Error.textContent = '';
+                }
+            });
+        });
+        </script>
 {% endblock %}
