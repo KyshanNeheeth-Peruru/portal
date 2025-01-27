@@ -288,10 +288,9 @@ def register_view(request, uidb64,token):
                         "pasw1": pasw1,
                         "pasw2": pasw2,
                     }
-                    # create_ldap_user(updated_request)
+                    create_ldap_user(updated_request)
                     user.refresh_from_db()
-                    print(user)
-                    # activate_user(user)
+                    activate_user(user)
                     user_counter = Misc.objects.get(setting='users_registered_counter')
                     user_counter.value = str(int(user_counter.value) + 1)
                     user_counter.save()
