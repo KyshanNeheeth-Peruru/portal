@@ -1,3 +1,4 @@
+import hashlib
 import subprocess
 from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
@@ -8,13 +9,14 @@ from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.urls import reverse
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth import login, logout, get_user_model, authenticate, update_session_auth_hash
 from apply.constants import ActionNames
 from apply.forms import RegistrationForm, AdminView
 from apply.helper import insert_courses_into_user_courses, semester_year, change_ldap_password, sem_name, get_client_ip
-from apply.models import Courses, UserCourses, Semesters, Faq, Random, Misc
+from apply.models import Courses, UserCourses, Semesters, Faq, Random, Misc, EmailVerificationToken
 from apply.utils import token_generator
 from apply.ldap_helper import LDAPHelper
 from apply.remote_connect import RemoteConnect
@@ -97,23 +99,35 @@ def send_activation_email(request, user):
     email.send()
     logger.debug(f"Verification Email has been sent to {user_email}")
 
-def send_verification_email(request, email, token):
-    domain = get_current_site(request).domain
-    uidb64 = urlsafe_base64_encode(force_bytes(email))
-    token_generator = default_token_generator
-    link = reverse("create", kwargs={"uidb64": uidb64, "token": token_generator.make_token(None)})
-    activity_url = f"http://{domain}{link}"
 
+    
+def send_verification_email(email,domain):
+    uidb64 = urlsafe_base64_encode(force_bytes(email))
+    token = secrets.token_urlsafe()  # Generates a secure random token
+    token_hash = hashlib.sha256(f"{email}{token}".encode()).hexdigest()
+    verification_token, created = EmailVerificationToken.objects.get_or_create(
+        email=email,
+        defaults={'token_hash': token_hash}  # Set the token_hash if creating a new record
+    )
+    
+    if not created:
+        # If the token already exists, update the token_hash
+        verification_token.token_hash = token_hash
+        verification_token.created_at = timezone.now()  # Update the timestamp
+        verification_token.is_used = False  # Reset the used status
+        verification_token.save()
+    link = reverse("registration-form", kwargs={"uidb64": uidb64, "token": token})
+    activity_url = f"http://{domain}{link}"
+    print(activity_url)
     email_subject = ActionNames.RegisterLink
     email_body = f"Hi, please use this link to register :\n{activity_url}"
-
     email_msg = EmailMessage(
         subject=email_subject,
         body=email_body,
         from_email="noreply@cs.umb.edu",
         to=[email],
     )
-    email_msg.send()
+    # email_msg.send()
     logger.debug(f"Registraion link has been sent to {email}")
     
 def send_password_reset_email(user):
@@ -144,112 +158,154 @@ def forgot_password(request):
         
     return render(request, "../templates/registration/password_reset_form.html")
 
-def register_view(request):
+
+
+def register_email(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        if email:
+            if User.objects.filter(email=email).exists():
+                messages.error(request, 'A user already exists with this email.')
+                return render(request, '../templates/registration/register_email.html')
+            else:
+                if not email.endswith("@umb.edu"):
+                    messages.error(request, "Email must be from @umb.edu domain")
+                    return render(request, "../templates/registration/register_email.html")
+                domain = get_current_site(request).domain
+                send_verification_email(email,domain)
+                messages.success(request, f"Registraion link has been sent to {email}")
+                return render(request, '../templates/registration/register_email.html')
+            
+        else:
+            messages.error(request, 'Please enter valid email address.')
+            return render(request, '../templates/registration/register_email.html')
+        
+    return render(request, "../templates/registration/register_email.html")
+
+def register_view(request, uidb64,token):
+    try:
+        email = force_str(urlsafe_base64_decode(uidb64))
+        
+    except:
+        email=None
     account_registration = (Misc.objects.get(setting='is_account_registration_enabled').value.lower()=="true")
     if account_registration!=True:
         return render(request, "../templates/registration/registration_disabled.html")
     if request.method == "POST":
-        username= request.POST['username']
-        firstname= request.POST['firstname']
-        lastname= request.POST['lastname']
-        email= request.POST['email']
-        pasw1= request.POST['pasw1']
-        pasw2= request.POST['pasw2']
         
-        if User.objects.filter(username=username).exists():
-            messages.error(request, "A user with this username already exists. Please choose a different username.")
-            return render(request, "../templates/registration/register.html")
-        
-        users_with_same_name = User.objects.filter(first_name=firstname, last_name=lastname)
-        if users_with_same_name.exists():
-            email_parts = email.split('@')
-            name_part = email_parts[0]
-            name_parts = name_part.split('.')
-            first_name = name_parts[0]
-            last_name = name_parts[1]
-            if last_name[-3:].isdigit():
-                last_name_nonum = last_name[:-3]
-                users_no_num_lastname = User.objects.filter(first_name=first_name, last_name=last_name_nonum)
-                firstname = first_name
-                lastname = last_name_nonum
-                if users_no_num_lastname.exists():
-                    last_name=name_parts[1]
-                    lastname=last_name
-                else:
-                    last_name=last_name_nonum
-            
-            
-                        
-        if User.objects.filter(first_name=firstname, last_name=lastname).exists():
-            messages.error(request, "Another user is using the same first name and last name. Please contact email us to finish your registration process.")
-            return render(request, "../templates/registration/register.html")
-        
-        if not email.endswith("@umb.edu"):
-            messages.error(request, "Email must be from @umb.edu domain")
-            return render(request, "../templates/registration/register.html")
-        if User.objects.filter(email=email).exists():
-            messages.error(request, "A user already exists with this email.")
-            return render(request, "../templates/registration/register.html")
-        if(pasw1!=pasw2):
-            messages.error(request,"Passwords dont match")
-            return render(request, "../templates/registration/register.html")
-        else:
-            unix_name=username.lower()
-            if (len(unix_name) >= 3 and unix_name in pasw1) or (unix_name in pasw2):
-                messages.error(request, 'Password may not contain username.')
-                return render(request, "../templates/registration/register.html")
-            
-            if not username.isalnum():
-                messages.error(request, 'Username should be alphanumeric.')
-                return render(request, "../templates/registration/register.html")
-            
-            for char in username:
-                if char.isupper():
-                    messages.error(request, 'Please use all lower case in username.')
-                    return render(request, "../templates/registration/register.html")
-            
-            if (len(unix_name) < 3) or (len(unix_name) > 8) or (unix_name[0].isdigit()):
-                messages.error(request, 'Username must not start with a number and must be 3 to 8 characters long.')
-                return render(request, "../templates/registration/register.html")
-            
-            if (len(pasw1) <10):
-                messages.error(request, 'Password need to be more than 8 Characters.')
-                return render(request, "../templates/registration/register.html")
+        try:
+            received_token_hash = hashlib.sha256(f"{email}{token}".encode()).hexdigest()
+            verification_token = EmailVerificationToken.objects.get(email=email)
+            if verification_token.token_hash == received_token_hash:
+                if verification_token.is_used:
+                    messages.error(request, "registration link has already been used.")
+                    return redirect('register')
                 
-            categories = [
-                r'[A-Z\u00C0-\u02AF\u0370-\u1FFF\u2C00-\uD7FF]',  # Uppercase letters
-                r'[a-z\u00C0-\u02AF\u0370-\u1FFF\u2C00-\uD7FF]',  # Lowercase letters
-                r'\d',  # Digits
-                r'[\W_]',  # Special characters
-                r'[^\W\d_a-zA-Z\u00C0-\u02AF\u0370-\u1FFF\u2C00-\uD7FF]',  # Unicode alphabetic characters
-            ]
-            
-            categories_present = sum(bool(re.search(pattern, pasw1)) for pattern in categories)
-            
-            if categories_present < 3:
-                messages.error(request, 'Password must include characters from at least 3 categories.')
-                return render(request, "../templates/registration/register.html")
-            
-            user = User.objects.create_user(username,email,pasw1)
-            user.first_name = firstname
-            user.last_name = lastname
-            user.save()
-            deactivate_user(user)
-            updated_request = {
-                "username": username,
-                "firstname": firstname,
-                "lastname": lastname,
-                "email": email,
-                "pasw1": pasw1,
-                "pasw2": pasw2,
-            }
-            create_ldap_user(updated_request)
-            send_activation_email(request, user)
-            user_counter = Misc.objects.get(setting='users_registered_counter')
-            user_counter.value = str(int(user_counter.value) + 1)
-            user_counter.save()
-            return render(request, "../templates/home.html", {"activated": False})
-            # return render(request, "../templates/registration/register.html")      
+                username= request.POST['username']
+                firstname= request.POST['firstname']
+                lastname= request.POST['lastname']
+                pasw1= request.POST['pasw1']
+                pasw2= request.POST['pasw2']
+                
+                if User.objects.filter(username=username).exists():
+                    messages.error(request, "A user with this username already exists. Please choose a different username.")
+                    return render(request, "../templates/registration/register.html")
+                
+                users_with_same_name = User.objects.filter(first_name=firstname, last_name=lastname)
+                if users_with_same_name.exists():
+                    email_parts = email.split('@')
+                    name_part = email_parts[0]
+                    name_parts = name_part.split('.')
+                    first_name = name_parts[0]
+                    last_name = name_parts[1]
+                    if last_name[-3:].isdigit():
+                        last_name_nonum = last_name[:-3]
+                        users_no_num_lastname = User.objects.filter(first_name=first_name, last_name=last_name_nonum)
+                        firstname = first_name
+                        lastname = last_name_nonum
+                        if users_no_num_lastname.exists():
+                            last_name=name_parts[1]
+                            lastname=last_name
+                        else:
+                            last_name=last_name_nonum       
+                if User.objects.filter(first_name=firstname, last_name=lastname).exists():
+                    messages.error(request, "Another user is using the same first name and last name. Please contact email us to finish your registration process.")
+                    return render(request, "../templates/registration/register.html")
+                if User.objects.filter(email=email).exists():
+                    messages.error(request, "A user already exists with this email.")
+                    return render(request, "../templates/registration/register.html")
+                if(pasw1!=pasw2):
+                    messages.error(request,"Passwords dont match")
+                    return render(request, "../templates/registration/register.html")
+                else:
+                    unix_name=username.lower()
+                    if (len(unix_name) >= 3 and unix_name in pasw1) or (unix_name in pasw2):
+                        messages.error(request, 'Password may not contain username.')
+                        return render(request, "../templates/registration/register.html")
+                    
+                    if not username.isalnum():
+                        messages.error(request, 'Username should be alphanumeric.')
+                        return render(request, "../templates/registration/register.html")
+                    
+                    for char in username:
+                        if char.isupper():
+                            messages.error(request, 'Please use all lower case in username.')
+                            return render(request, "../templates/registration/register.html")
+                    
+                    if (len(unix_name) < 3) or (len(unix_name) > 8) or (unix_name[0].isdigit()):
+                        messages.error(request, 'Username must not start with a number and must be 3 to 8 characters long.')
+                        return render(request, "../templates/registration/register.html")
+                    
+                    if (len(pasw1) <10):
+                        messages.error(request, 'Password need to be more than 8 Characters.')
+                        return render(request, "../templates/registration/register.html")
+                        
+                    categories = [
+                        r'[A-Z\u00C0-\u02AF\u0370-\u1FFF\u2C00-\uD7FF]',  # Uppercase letters
+                        r'[a-z\u00C0-\u02AF\u0370-\u1FFF\u2C00-\uD7FF]',  # Lowercase letters
+                        r'\d',  # Digits
+                        r'[\W_]',  # Special characters
+                        r'[^\W\d_a-zA-Z\u00C0-\u02AF\u0370-\u1FFF\u2C00-\uD7FF]',  # Unicode alphabetic characters
+                    ]
+                    
+                    categories_present = sum(bool(re.search(pattern, pasw1)) for pattern in categories)
+                    
+                    if categories_present < 3:
+                        messages.error(request, 'Password must include characters from at least 3 categories.')
+                        return render(request, "../templates/registration/register.html")
+                    
+                    user = User.objects.create_user(username,email,pasw1)
+                    user.first_name = firstname
+                    user.last_name = lastname
+                    user.save()
+                    
+                    
+                    updated_request = {
+                        "username": username,
+                        "firstname": firstname,
+                        "lastname": lastname,
+                        "email": email,
+                        "pasw1": pasw1,
+                        "pasw2": pasw2,
+                    }
+                    # create_ldap_user(updated_request)
+                    user.refresh_from_db()
+                    print(user)
+                    # activate_user(user)
+                    user_counter = Misc.objects.get(setting='users_registered_counter')
+                    user_counter.value = str(int(user_counter.value) + 1)
+                    user_counter.save()
+                    verification_token.is_used = True
+                    verification_token.save() 
+                    messages.success(request, "Your account has been activated!")
+                    return redirect('login')     
+            else:
+                messages.error(request, "Activation link is invalid.")
+                return redirect('register')
+        except EmailVerificationToken.DoesNotExist:
+            messages.error(request, "Activation link is invalid.")
+            return redirect('register')
+    
     return render(request, "../templates/registration/register.html")
 
 def activate(request, uidb64, token):

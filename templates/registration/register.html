@@ -26,11 +26,11 @@
                     <label for="lastname">Last Name<span class="asteriskField">*</span></label>
                     <input type="text" class="form-control form-control-user" id="lastname" name="lastname">
                 </div>
-                <div class="form-group mb-9">
+                {% comment %} <div class="form-group mb-9">
                     <label for="email">Email Address<span class="asteriskField">*</span></label>
                     <input type="email" class="form-control form-control-user" id="email" name="email">
-                    {% comment %} <small id="hint_id_email" class="form-text text-muted">Must be @umb.edu email Address.</small> {% endcomment %}
-                </div>
+                     <small id="hint_id_email" class="form-text text-muted">Must be @umb.edu email Address.</small> 
+                </div> {% endcomment %}
                 <div class="form-group mb-9">
                     <label for="pasw1">Password<span class="asteriskField">*</span></label>
                     <input type="password" class="form-control form-control-user" id="pasw1" name="pasw1">
@@ -71,14 +71,14 @@
             const usernameInput = document.getElementById('username');
             const firstnameInput = document.getElementById('firstname');
             const lastnameInput = document.getElementById('lastname');
-            const emailInput = document.getElementById('email');
+            //const emailInput = document.getElementById('email');
             const pasw1Input = document.getElementById('pasw1');
             const pasw2Input = document.getElementById('pasw2');
     
             const usernameError = document.createElement('small');
             const firstnameError = document.createElement('small');
             const lastnameError = document.createElement('small');
-            const emailError = document.createElement('small');
+            //const emailError = document.createElement('small');
             const pasw1Error = document.createElement('small');
             const pasw2Error = document.createElement('small');
             const passwordRequirements = document.createElement('div');
@@ -89,7 +89,7 @@
             usernameError.className = 'form-text text-danger';
             firstnameError.className = 'form-text text-danger';
             lastnameError.className = 'form-text text-danger';
-            emailError.className = 'form-text text-danger';
+            //emailError.className = 'form-text text-danger';
             pasw1Error.className = 'form-text text-danger';
             pasw2Error.className = 'form-text text-danger';
             
@@ -100,7 +100,7 @@
             usernameInput.parentNode.appendChild(usernameError);
             firstnameInput.parentNode.appendChild(firstnameError);
             lastnameInput.parentNode.appendChild(lastnameError);
-            emailInput.parentNode.appendChild(emailError);
+            //emailInput.parentNode.appendChild(emailError);
             pasw1Input.parentNode.appendChild(pasw1Error);
             pasw2Input.parentNode.appendChild(pasw2Error);
             
@@ -182,7 +182,7 @@
                 }
             });
     
-            emailInput.addEventListener('input', function() {
+            /*emailInput.addEventListener('input', function() {
                 const email = this.value.trim();
                 if (!email) {
                     emailError.textContent = 'Email is required.';
@@ -191,7 +191,7 @@
                 } else {
                     emailError.textContent = '';
                 }
-            });
+            }); */
     
             pasw1Input.addEventListener('input', function() {
                 const password = this.value;

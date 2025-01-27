@@ -1,0 +1,36 @@
+<!-- templates/registration/register_email.html -->
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+    {% if user.is_authenticated %}
+        <!-- Redirect the user to the courses page if already logged in -->
+        <meta http-equiv="Refresh" content="0; url='/'" />
+        <!-- <h2>You are already logged in, please <a href="/logout"> log out </a></h2> -->
+    {% else  %}
+    
+        <div class="p-1 w-100 h-100">
+            <h2>Create your UMB CS Portal Account</h2>
+            <h6>Please email us at <a href = "mailto: operator@cs.umb.edu">operator@cs.umb.edu</a> if you do not recevice registration link to your email.</h6>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                  <input type="email" class="form-control form-control-user" id="email"
+                         name="email" placeholder="Email Address">
+              </div>
+                <input type="submit" class="btn btn-primary w-100" value="Send me instructions!">
+              </form>
+            <div class="messages">
+                {% for message in messages %}
+                  <p style="margin: 10px 0; padding: 5px; border-radius: 4px; font-size: 14px;
+                            {% if message.tags == 'success' %} color: green; background-color: #e9f7ef; border: 1px solid #1c7430; {% endif %}
+                            {% if message.tags == 'error' %} color: red; background-color: #f8e8e8; border: 1px solid #d32f2f; {% endif %}">
+                    {{ message }}
+                  </p>
+                {% endfor %}
+            </div>
+            <p style="font-size: 20px;">Already have an account? <a href="{% url 'login' %}">Login</a>!</p>
+        </div>
+    
+    {% endif %}
+{% endblock %}

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from apply.models import Courses, UserCourses, Semesters, Faq, CoursesAdmin, Random, UserCoursesAdmin, Misc
+from apply.models import Courses, EmailVerificationToken, UserCourses, Semesters, Faq, CoursesAdmin, Random, UserCoursesAdmin, Misc
 
 # Register your models here.
 # class UserCoursesAdmin(admin.ModelAdmin):
@@ -10,3 +10,4 @@ admin.site.register(Semesters)
 admin.site.register(Faq)
 admin.site.register(Random)
 admin.site.register(Misc)
+admin.site.register(EmailVerificationToken)

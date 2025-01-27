@@ -88,3 +88,9 @@ class Misc(models.Model):
     
     def __str__(self):
         return f"Setting: {self.setting}, Value: {self.value}"
+
+class EmailVerificationToken(models.Model):
+    email = models.EmailField(unique=True)
+    token_hash = models.CharField(max_length=64)  
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_used = models.BooleanField(default=False)  
