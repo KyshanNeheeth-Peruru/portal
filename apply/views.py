@@ -127,7 +127,7 @@ def send_verification_email(email,domain):
         from_email="noreply@cs.umb.edu",
         to=[email],
     )
-    # email_msg.send()
+    email_msg.send()
     logger.debug(f"Registraion link has been sent to {email}")
     
 def send_password_reset_email(user):
