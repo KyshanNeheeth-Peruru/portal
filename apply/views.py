@@ -35,6 +35,9 @@ import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django import forms
+from django.db.models.functions import Lower, Upper, Concat, Substr, Length
+from django.db.models import Value, CharField, Q, F, Func, Case, When
+from django.db.models.functions import Concat
 
 env = environ.Env()
 environ.Env.read_env()
@@ -581,14 +584,37 @@ def faq(request):
 
 @login_required
 def lablist(request):
-    sems=reversed(Semesters.objects.all())
+    sems = reversed(Semesters.objects.all())
+    
     if request.method == 'POST':
         selected_sem = request.POST["selected_sem"]
-        allusers = User.objects.filter(Q(usercourses__course__course_semester__semester_longname=selected_sem) | Q(is_staff=True)).distinct().order_by('last_name')
-        # non_faculty = User.objects.filter(usercourses__course__course_semester__semester_longname=selected_sem).exclude(groups__name='Faculty').distinct().order_by('last_name')
-        # faculty=(User.objects.filter(usercourses__course__course_semester__semester_longname=selected_sem,groups__name='Faculty').distinct().order_by('last_name'))
-        return render(request, "../templates/lab_list.html",{'sems':sems,'selected_sem':selected_sem,'lab_list':allusers})
-    return render(request, "../templates/lab_list.html",{'sems':sems})
+        
+        # Annotate the last name and first name with proper formatting
+        allusers = User.objects.filter(
+            Q(usercourses__course__course_semester__semester_longname=selected_sem) | Q(is_staff=True)
+        ).distinct().annotate(
+            # Check if the last three characters of the last name are digits, and remove them
+            cleaned_last_name=Case(
+                When(last_name__regex=r'\d{3}$', then=Substr('last_name', 1, Length('last_name') - 3)),  # Remove last 3 digits
+                default=F('last_name'),
+                output_field=CharField()
+            ),
+            formatted_last_name=Concat(
+                Upper(Substr('cleaned_last_name', 1, 1)),  # Capitalize the first letter
+                Lower(Substr('cleaned_last_name', 2)),     # Lowercase the rest
+                output_field=CharField()
+            ),
+            formatted_first_name=Concat(
+                Upper(Substr('first_name', 1, 1)),  # Capitalize the first letter
+                Lower(Substr('first_name', 2)),     # Lowercase the rest
+                output_field=CharField()
+            )
+        ).order_by('formatted_last_name', 'formatted_first_name')
+
+        return render(request, "../templates/lab_list.html", {
+            'sems': sems, 'selected_sem': selected_sem, 'lab_list': allusers
+        })
+    return render(request, "../templates/lab_list.html", {'sems': sems})
 
 def admin_view(request):
     form = AdminView()
